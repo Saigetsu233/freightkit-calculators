@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SiteFooter, SiteHeader } from "./components/SiteChrome";
+import { guides } from "./lib/guides";
 import { tools } from "./lib/tools";
 
 export default function Home() {
@@ -12,7 +13,7 @@ export default function Home() {
           <p className="eyebrow">Free packaging &amp; freight calculators</p>
           <h1>Packaging math,<br />without the spreadsheet.</h1>
           <p className="hero-lede">
-            Ten practical calculators for ecommerce, warehouse, and freight teams.
+            Twenty practical calculators for ecommerce, warehouse, and freight teams.
             Check dimensional weight, carton fit, pallet loads, shipping cost, and
             margin—in seconds.
           </p>
@@ -20,7 +21,7 @@ export default function Home() {
             <Link className="button button-primary" href="/tools/dimensional-weight-calculator">
               Calculate dimensional weight <span aria-hidden="true">↗</span>
             </Link>
-            <a className="text-link" href="#all-tools">Browse all 10 tools</a>
+            <a className="text-link" href="#all-tools">Browse all 20 tools</a>
           </div>
           <div className="trust-row" aria-label="Product qualities">
             <span>No sign-up</span><span>Runs in your browser</span><span>Clear formulas</span>
@@ -46,8 +47,8 @@ export default function Home() {
 
       <section className="signal-strip">
         <div className="shell signal-grid">
-          <div><strong>10</strong><span>focused calculators</span></div>
-          <div><strong>3</strong><span>unit systems covered</span></div>
+          <div><strong>20</strong><span>focused calculators</span></div>
+          <div><strong>16</strong><span>practical guides</span></div>
           <div><strong>0</strong><span>accounts required</span></div>
           <p>Built for quick estimates before you quote, pack, or ship.</p>
         </div>
@@ -79,6 +80,17 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      <section className="home-guides shell">
+        <div className="section-heading">
+          <div><p className="eyebrow">From answer to action</p><h2>Use the number.<br/>Know its limits.</h2></div>
+          <p>Original working guides connect each formula to measurements, quote checks, warehouse trials, and decisions.</p>
+        </div>
+        <div className="home-guide-grid">{guides.slice(0,4).map((guide)=><Link href={`/guides/${guide.slug}`} key={guide.slug}><span>{guide.category} · {guide.readTime}</span><h3>{guide.title}</h3><p>{guide.description}</p></Link>)}</div>
+        <Link className="text-link collection-link" href="/guides">Browse all {guides.length} guides ↗</Link>
+      </section>
+
+      <section className="home-product"><div className="shell home-product-grid"><div><p className="eyebrow eyebrow-light">FreightKit Operations Workbook</p><h2>Keep the free tools.<br/>Buy the repeatable workflow.</h2><p>Batch DIM checks, freight quotes, pallet plans, landed cost, and ecommerce margin—connected in one editable Excel workbook.</p></div><div className="home-product-buy"><strong>$19</strong><span>one-time · no subscription</span><Link className="button button-acid" href="/resources#spreadsheet-pack">See what&apos;s included ↗</Link></div></div></section>
 
       <section className="workflow-section">
         <div className="shell workflow-grid">

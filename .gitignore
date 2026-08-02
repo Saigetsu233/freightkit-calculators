@@ -28,9 +28,12 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 .devserver.*.log
+.dev.stdout.log
+.dev.stderr.log
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -42,3 +45,4 @@ next-env.d.ts
 /.wrangler/
 /outputs/
 /work/
+/artifacts/

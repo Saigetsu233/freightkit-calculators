@@ -10,7 +10,8 @@ export function SiteHeader() {
         </Link>
         <nav className="site-nav" aria-label="Primary navigation">
           <Link href="/#all-tools">All tools</Link>
-          <Link href="/about">About</Link>
+          <Link href="/guides">Guides</Link>
+          <Link href="/resources">Resources</Link>
           <Link className="nav-pill" href="/tools/dimensional-weight-calculator">Start calculating</Link>
         </nav>
       </div>
@@ -31,6 +32,8 @@ export function SiteFooter() {
         </div>
         <nav className="footer-links" aria-label="Footer navigation">
           <Link href="/#all-tools">All calculators</Link>
+          <Link href="/guides">Guides</Link>
+          <Link href="/resources">Workbook &amp; resources</Link>
           <Link href="/about">About</Link>
           <Link href="/privacy">Privacy</Link>
           <Link href="/tools/cbm-calculator">CBM calculator</Link>

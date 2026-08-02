@@ -12,6 +12,16 @@ const toolRoutes = [
   ["corrugated-box-cost-calculator", "Corrugated Box Cost Calculator", "$534.60"],
   ["shipping-cost-estimator", "Shipping Cost Estimator", "$69.01"],
   ["ecommerce-margin-calculator", "Ecommerce Margin Calculator", "$24.53"],
+  ["freight-density-calculator", "Freight Density Calculator", "234.8 kg/m³"],
+  ["air-freight-chargeable-weight-calculator", "Air Freight Chargeable Weight Calculator", "160 kg"],
+  ["lcl-chargeable-volume-calculator", "LCL W/M Charge Calculator", "$841.20"],
+  ["load-meter-calculator", "Load Meter Calculator", "4 LDM"],
+  ["landed-cost-calculator", "Landed Cost Calculator", "$13,191.36"],
+  ["reorder-point-calculator", "Reorder Point Calculator", "498 units"],
+  ["eoq-calculator", "Economic Order Quantity Calculator", "548 units"],
+  ["warehouse-storage-cost-calculator", "Warehouse Storage Cost Calculator", "$2,091.00"],
+  ["pallet-stack-height-calculator", "Pallet Stack Height Calculator", "140 cm"],
+  ["packaging-waste-calculator", "Packaging Waste Calculator", "10.8%"],
 ];
 
 async function render(pathname = "/") {
@@ -38,12 +48,12 @@ test("server-renders the finished FreightKit homepage", async () => {
   const html = await response.text();
   assert.match(html, /FreightKit/);
   assert.match(html, /Packaging math/);
-  assert.match(html, /Browse all 10 tools/);
+  assert.match(html, /Browse all 20 tools/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/);
   for (const [slug] of toolRoutes) assert.match(html, new RegExp(`/tools/${slug}`));
 });
 
-test("all ten calculator routes render their working interface", async () => {
+test("all twenty calculator routes render their working interface", async () => {
   for (const [slug, title, expectedResult] of toolRoutes) {
     const response = await render(`/tools/${slug}`);
     assert.equal(response.status, 200, slug);
@@ -63,4 +73,23 @@ test("supporting trust pages render", async () => {
     assert.equal(response.status, 200);
     assert.match(await response.text(), new RegExp(expected));
   }
+});
+
+test("guides and monetisation resources render", async () => {
+  const guides = await render("/guides");
+  assert.equal(guides.status, 200);
+  const guideHtml = await guides.text();
+  assert.match(guideHtml, /Sixteen practical workflows/);
+  assert.match(guideHtml, /dimensional-weight-packaging-audit/);
+
+  const article = await render("/guides/landed-cost-model-for-imports");
+  assert.equal(article.status, 200);
+  assert.match(await article.text(), /Build a landed-cost model/);
+
+  const resources = await render("/resources");
+  assert.equal(resources.status, 200);
+  const resourceHtml = await resources.text();
+  assert.match(resourceHtml, /FreightKit Operations Workbook/);
+  assert.match(resourceHtml, /product-price[^>]*>\$<!-- -->19/);
+  assert.match(resourceHtml, /checkout not connected/);
 });
