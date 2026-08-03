@@ -25,6 +25,9 @@ export async function generateMetadata(): Promise<Metadata> {
       "shipping calculator",
       "packaging tools",
     ],
+    verification: {
+      google: "NyUKa8vAgyDXfVy6b7JdSnifHTCoSMHJIlmDToOIETM",
+    },
     openGraph: {
       type: "website",
       siteName: "FreightKit",
