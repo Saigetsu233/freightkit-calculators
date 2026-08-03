@@ -3,7 +3,7 @@ import { tools } from "./lib/tools";
 import { guides } from "./lib/guides";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const base = "https://shipmathlab.com";
   return [
     { url: base, changeFrequency: "weekly", priority: 1 },
     ...tools.map((tool) => ({ url: `${base}/tools/${tool.slug}`, changeFrequency: "monthly" as const, priority: .8 })),
