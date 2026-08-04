@@ -64,15 +64,21 @@ async function recordAnalytics(request: Request, env: Env) {
     const contentLength = Number(request.headers.get("content-length") ?? "0");
     if (contentLength > 2048) return new Response(null, { status: 204 });
 
-    const payload = (await request.json()) as { path?: unknown; referrer?: unknown };
+    const payload = (await request.json()) as { path?: unknown; referrer?: unknown; isInternal?: unknown };
     const path = normalizeAnalyticsPath(payload.path);
     if (!path) return new Response(null, { status: 204 });
 
     const eventDate = new Date().toISOString().slice(0, 10);
     const visitorHash = await dailyVisitorHash(eventDate, request, env.ANALYTICS_SALT);
     await env.DB.prepare(
-      "INSERT INTO page_views (event_date, path, referrer_host, visitor_hash) VALUES (?, ?, ?, ?)",
-    ).bind(eventDate, path, normalizeReferrerHost(payload.referrer), visitorHash).run();
+      "INSERT INTO page_views (event_date, path, referrer_host, visitor_hash, is_internal) VALUES (?, ?, ?, ?, ?)",
+    ).bind(
+      eventDate,
+      path,
+      normalizeReferrerHost(payload.referrer),
+      visitorHash,
+      payload.isInternal === true ? 1 : 0,
+    ).run();
   } catch {
     // Analytics must never affect the calculator experience.
   }
@@ -87,18 +93,30 @@ async function analyticsReport(request: Request, env: Env) {
   }
 
   const startDate = new Date(Date.now() - 29 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-  const [totals, daily, topPages, topReferrers] = await env.DB.batch([
+  const [totals, internalTotals, historicalTotals, daily, internalDaily, historicalDaily, topPages, topReferrers] = await env.DB.batch([
     env.DB.prepare(
-      "SELECT COUNT(*) AS views, COUNT(DISTINCT visitor_hash) AS daily_unique_visitors FROM page_views WHERE event_date >= ?",
+      "SELECT COUNT(*) AS views, COUNT(DISTINCT visitor_hash) AS daily_unique_visitors FROM page_views WHERE event_date >= ? AND is_internal = 0",
     ).bind(startDate),
     env.DB.prepare(
-      "SELECT event_date AS date, COUNT(*) AS views, COUNT(DISTINCT visitor_hash) AS visitors FROM page_views WHERE event_date >= ? GROUP BY event_date ORDER BY event_date",
+      "SELECT COUNT(*) AS views, COUNT(DISTINCT visitor_hash) AS daily_unique_visitors FROM page_views WHERE event_date >= ? AND is_internal = 1",
     ).bind(startDate),
     env.DB.prepare(
-      "SELECT path, COUNT(*) AS views FROM page_views WHERE event_date >= ? GROUP BY path ORDER BY views DESC LIMIT 20",
+      "SELECT COUNT(*) AS views, COUNT(DISTINCT visitor_hash) AS daily_unique_visitors FROM page_views WHERE event_date >= ? AND is_internal IS NULL",
     ).bind(startDate),
     env.DB.prepare(
-      "SELECT referrer_host AS host, COUNT(*) AS views FROM page_views WHERE event_date >= ? AND referrer_host <> '' GROUP BY referrer_host ORDER BY views DESC LIMIT 20",
+      "SELECT event_date AS date, COUNT(*) AS views, COUNT(DISTINCT visitor_hash) AS visitors FROM page_views WHERE event_date >= ? AND is_internal = 0 GROUP BY event_date ORDER BY event_date",
+    ).bind(startDate),
+    env.DB.prepare(
+      "SELECT event_date AS date, COUNT(*) AS views, COUNT(DISTINCT visitor_hash) AS visitors FROM page_views WHERE event_date >= ? AND is_internal = 1 GROUP BY event_date ORDER BY event_date",
+    ).bind(startDate),
+    env.DB.prepare(
+      "SELECT event_date AS date, COUNT(*) AS views, COUNT(DISTINCT visitor_hash) AS visitors FROM page_views WHERE event_date >= ? AND is_internal IS NULL GROUP BY event_date ORDER BY event_date",
+    ).bind(startDate),
+    env.DB.prepare(
+      "SELECT path, COUNT(*) AS views FROM page_views WHERE event_date >= ? AND is_internal = 0 GROUP BY path ORDER BY views DESC LIMIT 20",
+    ).bind(startDate),
+    env.DB.prepare(
+      "SELECT referrer_host AS host, COUNT(*) AS views FROM page_views WHERE event_date >= ? AND is_internal = 0 AND referrer_host <> '' GROUP BY referrer_host ORDER BY views DESC LIMIT 20",
     ).bind(startDate),
   ]);
 
@@ -106,7 +124,11 @@ async function analyticsReport(request: Request, env: Env) {
     {
       period: { days: 30, startDate, endDate: new Date().toISOString().slice(0, 10) },
       totals: totals.results[0] ?? { views: 0, daily_unique_visitors: 0 },
+      internalTotals: internalTotals.results[0] ?? { views: 0, daily_unique_visitors: 0 },
+      historicalUnclassifiedTotals: historicalTotals.results[0] ?? { views: 0, daily_unique_visitors: 0 },
       daily: daily.results,
+      internalDaily: internalDaily.results,
+      historicalUnclassifiedDaily: historicalDaily.results,
       topPages: topPages.results,
       topReferrers: topReferrers.results,
     },

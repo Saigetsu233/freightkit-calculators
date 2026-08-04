@@ -68,7 +68,7 @@ test("all twenty calculator routes render their working interface", async () => 
 });
 
 test("supporting trust pages render", async () => {
-  for (const [path, expected] of [["/about", "Useful answers"], ["/privacy", "Privacy, in plain English"]]) {
+  for (const [path, expected] of [["/about", "Useful answers"], ["/privacy", "Privacy, in plain English"], ["/internal-traffic", "Keep our visits out of public traffic"]]) {
     const response = await render(path);
     assert.equal(response.status, 200);
     assert.match(await response.text(), new RegExp(expected));

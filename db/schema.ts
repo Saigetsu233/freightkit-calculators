@@ -9,6 +9,7 @@ export const pageViews = sqliteTable(
     path: text("path").notNull(),
     referrerHost: text("referrer_host").notNull().default(""),
     visitorHash: text("visitor_hash").notNull(),
+    isInternal: integer("is_internal"),
     createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   },
   (table) => [

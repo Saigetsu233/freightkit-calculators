@@ -201,6 +201,17 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .legal-page p, .legal-page li { color: #50534c; line-height: 1.75; }
 .legal-page .updated { color: var(--orange-dark); font-size: .76rem; font-weight: 850; text-transform: uppercase; letter-spacing: .09em; }
 
+.internal-page { min-height: 650px; display: grid; place-items: center; padding-block: 70px 100px; }
+.internal-card { width: min(760px, 100%); padding: clamp(28px, 6vw, 58px); background: var(--white); border: 1px solid var(--ink); box-shadow: 10px 10px 0 var(--ink); }
+.internal-card h1 { margin: 22px 0 18px; font: 500 clamp(2.5rem, 6vw, 4.5rem)/.96 Georgia, serif; letter-spacing: -.05em; }
+.internal-card > p:not(.internal-status) { color: var(--muted); line-height: 1.7; }
+.internal-status { display: inline-flex; margin: 0; padding: 8px 11px; background: var(--paper-deep); font: 850 .7rem/1 ui-monospace, monospace; text-transform: uppercase; letter-spacing: .06em; }
+.internal-status.is-on { background: var(--acid); }
+.internal-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+.internal-secondary { background: transparent; color: var(--ink); }
+.internal-actions button:disabled { cursor: default; opacity: .45; transform: none; box-shadow: none; }
+.internal-note { margin: 28px 0 0; padding-top: 20px; border-top: 1px solid var(--line); font-size: .76rem; }
+
 .collection-hero { padding-block: 80px 70px; }
 .collection-hero h1 { max-width: 950px; font-size: clamp(3.4rem,7vw,6.5rem); }
 .collection-hero > p:last-child { max-width: 760px; margin: 30px 0 0; color: var(--muted); font-size: 1.05rem; line-height: 1.7; }
