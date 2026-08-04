@@ -8,6 +8,10 @@ Transparent JavaScript formulas and free embeds for three practical shipping cal
 
 The live tools include visible assumptions, worked guides, and copyable results at [shipmathlab.com](https://shipmathlab.com/).
 
+[![ShipMathLab dimensional weight calculator](assets/shipmathlab-dimensional-weight.png)](https://shipmathlab.com/tools/dimensional-weight-calculator)
+
+_Live product: a responsive dimensional-weight calculator with carrier presets, transparent assumptions, and instant results._
+
 ## Use the formulas
 
 The package has no runtime dependencies and uses standard ES modules.
