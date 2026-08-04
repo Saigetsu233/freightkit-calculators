@@ -8,19 +8,28 @@ export type ToolDefinition = {
   intro: string;
   formula: string;
   assumption: string;
+  reviewed?: string;
+  sources?: Array<{ label: string; url: string }>;
 };
 
 export const tools: ToolDefinition[] = [
   {
     slug: "dimensional-weight-calculator",
-    title: "Dimensional Weight Calculator",
+    title: "Dimensional Weight Calculator — FedEx, UPS, DHL & USPS",
     shortTitle: "Dimensional Weight",
     category: "Parcel",
     tag: "kg · lb",
-    description: "Compare actual and volumetric weight to estimate the chargeable weight of a parcel.",
-    intro: "Turn carton dimensions into dimensional weight, then compare it with the actual scale weight. Choose a metric or imperial divisor to match your carrier quote.",
+    description: "Compare actual and dimensional weight with carrier presets, quantity, and chargeable-weight rounding.",
+    intro: "Calculate dimensional and chargeable weight with planning presets for FedEx, UPS, DHL, and USPS, or enter your own divisor and rounding rule for a contracted service.",
     formula: "Dimensional weight = (length × width × height) ÷ divisor",
     assumption: "Carriers use different divisors by service, account, and destination. Confirm the divisor and rounding rules on your rate card before quoting.",
+    reviewed: "August 2026",
+    sources: [
+      { label: "FedEx dimensional weight guidance", url: "https://www.fedex.com/en-us/shipping/packaging/what-is-dimensional-weight.html" },
+      { label: "UPS dimensional weight and rate-type divisors", url: "https://developer.ups.com/us/en/support/shipping-support/shipping-dimensions-weight" },
+      { label: "DHL volumetric weight guidance", url: "https://www.dhl.com/discover/en-gb/ship-with-dhl/products-and-services/weight-and-dimensions" },
+      { label: "USPS dimensional weight example", url: "https://pe.usps.com/QSG_Archive/NHTML/QSG_Archive_20250119/Q201e.htm" },
+    ],
   },
   {
     slug: "cbm-calculator",
@@ -46,14 +55,19 @@ export const tools: ToolDefinition[] = [
   },
   {
     slug: "pallet-load-calculator",
-    title: "Pallet Load Calculator",
+    title: "Pallet Load Calculator — Cartons, Layers, Height & Weight",
     shortTitle: "Pallet Load",
     category: "Warehouse",
     tag: "layers · weight",
-    description: "Estimate cartons per layer, stack height, weight limit, and total cartons on a pallet.",
-    intro: "Estimate a simple column-stacked pallet load using pallet footprint, usable load height, carton dimensions, carton weight, and maximum load weight.",
+    description: "Compare standard pallet presets, carton orientation, layers, finished height, load weight, and footprint use.",
+    intro: "Build a transparent column-stack plan for Euro, industrial, GMA, half-Euro, or custom pallets. Compare carton rotation, height, weight, and footprint limits in one result.",
     formula: "Cartons = min(cartons per layer × layers, floor(max load weight ÷ carton weight))",
     assumption: "This planning estimate assumes no overhang and identical cartons. It does not assess compression strength, stability, local rules, or safe working load.",
+    reviewed: "August 2026",
+    sources: [
+      { label: "EPAL Euro pallet specifications", url: "https://www.epal-pallets.org/eu-en/load-carriers/epal-euro-pallet" },
+      { label: "ISO 6780 pallet dimensions overview", url: "https://www.iso.org/standard/30524.html" },
+    ],
   },
   {
     slug: "container-loading-calculator",
@@ -145,14 +159,19 @@ export const tools: ToolDefinition[] = [
   },
   {
     slug: "lcl-chargeable-volume-calculator",
-    title: "LCL W/M Charge Calculator",
+    title: "LCL W/M Calculator — Chargeable CBM & Ocean Freight Cost",
     shortTitle: "LCL W/M Charge",
     category: "Ocean freight",
     tag: "CBM · metric tonne",
-    description: "Estimate LCL weight-or-measure units and combine them with your quoted freight and fixed fees.",
-    intro: "Compare cubic metres with metric tonnes, select the larger chargeable unit, and apply your own LCL rate plus origin, destination, and document charges.",
+    description: "Calculate CBM and tonnes across multiple cargo lines, apply minimum W/M, and separate variable and fixed LCL charges.",
+    intro: "Enter multiple carton, crate, or pallet lines to calculate total CBM and gross tonnes. Apply the larger W/M basis, a quoted minimum, ocean rate, W/M surcharges, and local fees.",
     formula: "W/M units = max(total CBM, gross metric tonnes); total = W/M units × rate + fixed fees",
     assumption: "Tariffs can use minimums, density rules, local charges, and currencies that differ from this simple W/M model. Follow the forwarder's quote.",
+    reviewed: "August 2026",
+    sources: [
+      { label: "Maersk LCL weight and measure terms", url: "https://terms.maersk.com/LCL" },
+      { label: "Maersk shipping glossary — W/M", url: "https://www.maersk.com/de-de/support/glossaries/shipping-terms" },
+    ],
   },
   {
     slug: "load-meter-calculator",

@@ -14,7 +14,7 @@ const toolRoutes = [
   ["ecommerce-margin-calculator", "Ecommerce Margin Calculator", "$24.53"],
   ["freight-density-calculator", "Freight Density Calculator", "234.8 kg/m³"],
   ["air-freight-chargeable-weight-calculator", "Air Freight Chargeable Weight Calculator", "160 kg"],
-  ["lcl-chargeable-volume-calculator", "LCL W/M Charge Calculator", "$841.20"],
+  ["lcl-chargeable-volume-calculator", "LCL W/M Calculator", "$841.20"],
   ["load-meter-calculator", "Load Meter Calculator", "4 LDM"],
   ["landed-cost-calculator", "Landed Cost Calculator", "$13,191.36"],
   ["reorder-point-calculator", "Reorder Point Calculator", "498 units"],
@@ -49,6 +49,7 @@ test("server-renders the finished FreightKit homepage", async () => {
   assert.match(html, /FreightKit/);
   assert.match(html, /Packaging math/);
   assert.match(html, /Browse all 20 tools/);
+  assert.match(html, /Browse all [\s\S]{0,30}22[\s\S]{0,30} guides/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/);
   for (const [slug] of toolRoutes) assert.match(html, new RegExp(`/tools/${slug}`));
 });
@@ -79,7 +80,7 @@ test("guides and monetisation resources render", async () => {
   const guides = await render("/guides");
   assert.equal(guides.status, 200);
   const guideHtml = await guides.text();
-  assert.match(guideHtml, /Sixteen practical workflows/);
+  assert.match(guideHtml, /22[\s\S]{0,30} practical workflows/);
   assert.match(guideHtml, /dimensional-weight-packaging-audit/);
 
   const article = await render("/guides/landed-cost-model-for-imports");
@@ -92,4 +93,35 @@ test("guides and monetisation resources render", async () => {
   assert.match(resourceHtml, /FreightKit Operations Workbook/);
   assert.match(resourceHtml, /product-price[^>]*>\$<!-- -->19/);
   assert.match(resourceHtml, /checkout not connected/);
+});
+
+test("focus tools expose trusted references and free embeds", async () => {
+  for (const slug of ["dimensional-weight-calculator", "pallet-load-calculator", "lcl-chargeable-volume-calculator"]) {
+    const tool = await render(`/tools/${slug}`);
+    assert.equal(tool.status, 200, slug);
+    const toolHtml = await tool.text();
+    assert.match(toolHtml, /Free to embed/, slug);
+    assert.match(toolHtml, /Primary references/, slug);
+    assert.match(toolHtml, /application\/ld\+json/, slug);
+
+    const embed = await render(`/embed/${slug}`);
+    assert.equal(embed.status, 200, `embed ${slug}`);
+    assert.match(await embed.text(), /Powered by FreightKit/, `embed ${slug}`);
+  }
+});
+
+test("new search clusters render and link to their calculators", async () => {
+  const clusterRoutes = [
+    ["dimensional-weight-carrier-divisors", "dimensional-weight-calculator"],
+    ["dimensional-weight-rounding-examples", "dimensional-weight-calculator"],
+    ["standard-pallet-sizes-carton-fit", "pallet-load-calculator"],
+    ["pallet-height-weight-stability-limits", "pallet-load-calculator"],
+    ["calculate-lcl-wm-multiple-cartons", "lcl-chargeable-volume-calculator"],
+    ["lcl-minimum-charges-local-fees", "lcl-chargeable-volume-calculator"],
+  ];
+  for (const [guideSlug, toolSlug] of clusterRoutes) {
+    const response = await render(`/guides/${guideSlug}`);
+    assert.equal(response.status, 200, guideSlug);
+    assert.match(await response.text(), new RegExp(`/tools/${toolSlug}`), guideSlug);
+  }
 });

@@ -4,6 +4,8 @@ import { guides } from "./lib/guides";
 import { tools } from "./lib/tools";
 
 export default function Home() {
+  const featuredGuideSlugs = ["dimensional-weight-carrier-divisors", "standard-pallet-sizes-carton-fit", "calculate-lcl-wm-multiple-cartons", "lcl-minimum-charges-local-fees"];
+  const featuredGuides = featuredGuideSlugs.map((slug) => guides.find((guide) => guide.slug === slug)).filter((guide): guide is (typeof guides)[number] => Boolean(guide));
   return (
     <main>
       <SiteHeader />
@@ -48,7 +50,7 @@ export default function Home() {
       <section className="signal-strip">
         <div className="shell signal-grid">
           <div><strong>20</strong><span>focused calculators</span></div>
-          <div><strong>16</strong><span>practical guides</span></div>
+          <div><strong>{guides.length}</strong><span>practical guides</span></div>
           <div><strong>0</strong><span>accounts required</span></div>
           <p>Built for quick estimates before you quote, pack, or ship.</p>
         </div>
@@ -86,7 +88,7 @@ export default function Home() {
           <div><p className="eyebrow">From answer to action</p><h2>Use the number.<br/>Know its limits.</h2></div>
           <p>Original working guides connect each formula to measurements, quote checks, warehouse trials, and decisions.</p>
         </div>
-        <div className="home-guide-grid">{guides.slice(0,4).map((guide)=><Link href={`/guides/${guide.slug}`} key={guide.slug}><span>{guide.category} · {guide.readTime}</span><h3>{guide.title}</h3><p>{guide.description}</p></Link>)}</div>
+        <div className="home-guide-grid">{featuredGuides.map((guide)=><Link href={`/guides/${guide.slug}`} key={guide.slug}><span>{guide.category} · {guide.readTime}</span><h3>{guide.title}</h3><p>{guide.description}</p></Link>)}</div>
         <Link className="text-link collection-link" href="/guides">Browse all {guides.length} guides ↗</Link>
       </section>
 
