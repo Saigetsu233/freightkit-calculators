@@ -36,7 +36,7 @@ export function SiteFooter() {
           <Link href="/resources">Workbook &amp; resources</Link>
           <Link href="/about">About</Link>
           <Link href="/privacy">Privacy</Link>
-          <a href="https://github.com/Xenera-jiangchengzhi/freightkit-calculators" target="_blank" rel="noopener noreferrer">Open-source formulas</a>
+          <a href="https://github.com/Saigetsu233/freightkit-calculators" target="_blank" rel="noopener noreferrer">Open-source formulas</a>
           <Link href="/tools/cbm-calculator">CBM calculator</Link>
           <Link href="/tools/pallet-load-calculator">Pallet calculator</Link>
           <Link href="/tools/ecommerce-margin-calculator">Margin calculator</Link>

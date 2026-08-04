@@ -27,7 +27,7 @@ export function EmbedPanel({ slug, title }: { slug: string; title: string }) {
         <code>{code}</code>
         <div className="embed-actions">
           <button type="button" className="button button-primary" onClick={copyCode}>{copied ? "Embed code copied ✓" : "Copy embed code"}</button>
-          <a className="text-link" href="https://github.com/Xenera-jiangchengzhi/freightkit-calculators" target="_blank" rel="noopener noreferrer">Formula source on GitHub ↗</a>
+          <a className="text-link" href="https://github.com/Saigetsu233/freightkit-calculators" target="_blank" rel="noopener noreferrer">Formula source on GitHub ↗</a>
         </div>
       </div>
     </section>
