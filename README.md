@@ -25,9 +25,11 @@ ecommerce, warehouse, inventory, and freight teams. It includes twenty interacti
 - packaging waste and yield
 
 Every tool calculates locally in the browser, shows its method and assumptions,
-and produces a copyable result summary. The site also includes sixteen original
-working guides, a resources and workbook sales page, configurable checkout and
-affiliate URLs, per-page metadata, a sitemap, robots rules, trust pages, responsive
+and produces a copyable result summary. The site also includes twenty-two original
+working guides, three citation-ready topic hubs, free embeds for the focus tools,
+machine-readable formula documentation, first-party visitor and crawler analytics,
+a resources and workbook sales page, configurable checkout and affiliate URLs,
+per-page metadata, a sitemap, explicit search-crawler rules, trust pages, responsive
 layouts, and a purpose-built social sharing card.
 
 Commercial links are configured through the variables documented in `.env.example`.

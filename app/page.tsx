@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SiteFooter, SiteHeader } from "./components/SiteChrome";
 import { guides } from "./lib/guides";
 import { tools } from "./lib/tools";
+import { topics } from "./lib/topics";
 
 export default function Home() {
   const featuredGuideSlugs = ["dimensional-weight-carrier-divisors", "standard-pallet-sizes-carton-fit", "calculate-lcl-wm-multiple-cartons", "lcl-minimum-charges-local-fees"];
@@ -90,6 +91,11 @@ export default function Home() {
         </div>
         <div className="home-guide-grid">{featuredGuides.map((guide)=><Link href={`/guides/${guide.slug}`} key={guide.slug}><span>{guide.category} · {guide.readTime}</span><h3>{guide.title}</h3><p>{guide.description}</p></Link>)}</div>
         <Link className="text-link collection-link" href="/guides">Browse all {guides.length} guides ↗</Link>
+      </section>
+
+      <section className="home-topics shell">
+        <div className="section-heading"><div><p className="eyebrow">Three complete topic hubs</p><h2>From a question<br/>to a defensible answer.</h2></div><p>Short, citation-ready answers connect the formula, a worked example, primary references, the live calculator, and the longer operating guides.</p></div>
+        <div className="topic-card-grid">{topics.map((topic)=><Link href={`/topics/${topic.slug}`} key={topic.slug}><span>{topic.category}</span><h3>{topic.title}</h3><p>{topic.description}</p><strong>Open topic reference ↗</strong></Link>)}</div>
       </section>
 
       <section className="home-product"><div className="shell home-product-grid"><div><p className="eyebrow eyebrow-light">FreightKit Operations Workbook</p><h2>Keep the free tools.<br/>Buy the repeatable workflow.</h2><p>Batch DIM checks, freight quotes, pallet plans, landed cost, and ecommerce margin—connected in one editable Excel workbook.</p></div><div className="home-product-buy"><strong>$19</strong><span>one-time · no subscription</span><Link className="button button-acid" href="/resources#spreadsheet-pack">See what&apos;s included ↗</Link></div></div></section>

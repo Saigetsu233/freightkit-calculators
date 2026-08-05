@@ -23,6 +23,16 @@ interface ExecutionContext {
 
 const analyticsEncoder = new TextEncoder();
 
+const crawlerSignatures = [
+  { name: "OpenAI Search", patterns: ["oai-searchbot", "chatgpt-user"] },
+  { name: "Perplexity", patterns: ["perplexitybot", "perplexity-user"] },
+  { name: "Google", patterns: ["googlebot"] },
+  { name: "Bing", patterns: ["bingbot"] },
+  { name: "Anthropic", patterns: ["claudebot", "claude-web"] },
+  { name: "Apple", patterns: ["applebot"] },
+  { name: "Common Crawl", patterns: ["ccbot"] },
+] as const;
+
 function safeEqual(left: string, right: string) {
   if (left.length !== right.length) return false;
   let result = 0;
@@ -48,6 +58,58 @@ function normalizeReferrerHost(value: unknown) {
   }
 }
 
+function normalizeCampaignValue(value: unknown) {
+  return typeof value === "string" ? value.toLowerCase().trim().slice(0, 100) : "";
+}
+
+function detectCrawler(userAgent: string) {
+  const normalized = userAgent.toLowerCase();
+  return crawlerSignatures.find((crawler) => crawler.patterns.some((pattern) => normalized.includes(pattern)))?.name ?? "";
+}
+
+function classifySource(referrerHost: string, utmSource: string) {
+  const source = `${utmSource} ${referrerHost}`.toLowerCase();
+  if (source.includes("chatgpt") || source.includes("openai")) return "ChatGPT";
+  if (source.includes("perplexity")) return "Perplexity";
+  if (source.includes("copilot")) return "Copilot";
+  if (source.includes("google")) return "Google";
+  if (source.includes("bing")) return "Bing";
+  if (source.includes("github")) return "GitHub";
+  if (source.includes("reddit")) return "Reddit";
+  if (source.includes("linkedin")) return "LinkedIn";
+  if (referrerHost) return "Other referral";
+  return "Direct / unknown";
+}
+
+function isCrawlerContentPath(path: string) {
+  return path === "/" || [
+    "/tools/",
+    "/guides",
+    "/topics/",
+    "/embed/",
+    "/resources",
+    "/about",
+    "/privacy",
+    "/sitemap.xml",
+    "/robots.txt",
+    "/llms.txt",
+  ].some((prefix) => path.startsWith(prefix));
+}
+
+async function recordCrawlerHit(request: Request, env: Env, crawler: string) {
+  try {
+    if (!env.DB) return;
+    const url = new URL(request.url);
+    const path = normalizeAnalyticsPath(url.pathname);
+    if (!path || !isCrawlerContentPath(path)) return;
+    await env.DB.prepare(
+      "INSERT INTO crawler_hits (event_date, crawler, path) VALUES (?, ?, ?)",
+    ).bind(new Date().toISOString().slice(0, 10), crawler, path).run();
+  } catch {
+    // Crawler analytics must never affect page delivery.
+  }
+}
+
 async function dailyVisitorHash(date: string, request: Request, salt: string) {
   const ip = request.headers.get("cf-connecting-ip") ?? "unknown";
   const userAgent = request.headers.get("user-agent") ?? "unknown";
@@ -64,18 +126,30 @@ async function recordAnalytics(request: Request, env: Env) {
     const contentLength = Number(request.headers.get("content-length") ?? "0");
     if (contentLength > 2048) return new Response(null, { status: 204 });
 
-    const payload = (await request.json()) as { path?: unknown; referrer?: unknown; isInternal?: unknown };
+    const crawler = detectCrawler(request.headers.get("user-agent") ?? "");
+    if (crawler) return new Response(null, { status: 204 });
+
+    const payload = (await request.json()) as {
+      path?: unknown;
+      referrer?: unknown;
+      isInternal?: unknown;
+      utmSource?: unknown;
+      utmMedium?: unknown;
+    };
     const path = normalizeAnalyticsPath(payload.path);
     if (!path) return new Response(null, { status: 204 });
 
     const eventDate = new Date().toISOString().slice(0, 10);
     const visitorHash = await dailyVisitorHash(eventDate, request, env.ANALYTICS_SALT);
+    const referrerHost = normalizeReferrerHost(payload.referrer);
+    const utmSource = normalizeCampaignValue(payload.utmSource);
     await env.DB.prepare(
-      "INSERT INTO page_views (event_date, path, referrer_host, visitor_hash, is_internal) VALUES (?, ?, ?, ?, ?)",
+      "INSERT INTO page_views (event_date, path, referrer_host, source_channel, visitor_hash, is_internal) VALUES (?, ?, ?, ?, ?, ?)",
     ).bind(
       eventDate,
       path,
-      normalizeReferrerHost(payload.referrer),
+      referrerHost,
+      classifySource(referrerHost, utmSource),
       visitorHash,
       payload.isInternal === true ? 1 : 0,
     ).run();
@@ -93,7 +167,21 @@ async function analyticsReport(request: Request, env: Env) {
   }
 
   const startDate = new Date(Date.now() - 29 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-  const [totals, internalTotals, historicalTotals, daily, internalDaily, historicalDaily, topPages, topReferrers] = await env.DB.batch([
+  const [
+    totals,
+    internalTotals,
+    historicalTotals,
+    daily,
+    internalDaily,
+    historicalDaily,
+    topPages,
+    topReferrers,
+    sourceChannels,
+    crawlerTotals,
+    crawlerDaily,
+    topCrawlers,
+    crawlerTopPages,
+  ] = await env.DB.batch([
     env.DB.prepare(
       "SELECT COUNT(*) AS views, COUNT(DISTINCT visitor_hash) AS daily_unique_visitors FROM page_views WHERE event_date >= ? AND is_internal = 0",
     ).bind(startDate),
@@ -118,6 +206,21 @@ async function analyticsReport(request: Request, env: Env) {
     env.DB.prepare(
       "SELECT referrer_host AS host, COUNT(*) AS views FROM page_views WHERE event_date >= ? AND is_internal = 0 AND referrer_host <> '' GROUP BY referrer_host ORDER BY views DESC LIMIT 20",
     ).bind(startDate),
+    env.DB.prepare(
+      "SELECT CASE WHEN source_channel = '' THEN CASE WHEN referrer_host = '' THEN 'Direct / unknown' ELSE 'Other referral' END ELSE source_channel END AS source, COUNT(*) AS views, COUNT(DISTINCT visitor_hash) AS daily_unique_visitors FROM page_views WHERE event_date >= ? AND is_internal = 0 GROUP BY source ORDER BY views DESC LIMIT 20",
+    ).bind(startDate),
+    env.DB.prepare(
+      "SELECT COUNT(*) AS requests FROM crawler_hits WHERE event_date >= ?",
+    ).bind(startDate),
+    env.DB.prepare(
+      "SELECT event_date AS date, COUNT(*) AS requests FROM crawler_hits WHERE event_date >= ? GROUP BY event_date ORDER BY event_date",
+    ).bind(startDate),
+    env.DB.prepare(
+      "SELECT crawler, COUNT(*) AS requests FROM crawler_hits WHERE event_date >= ? GROUP BY crawler ORDER BY requests DESC LIMIT 20",
+    ).bind(startDate),
+    env.DB.prepare(
+      "SELECT crawler, path, COUNT(*) AS requests FROM crawler_hits WHERE event_date >= ? GROUP BY crawler, path ORDER BY requests DESC LIMIT 30",
+    ).bind(startDate),
   ]);
 
   return Response.json(
@@ -131,6 +234,11 @@ async function analyticsReport(request: Request, env: Env) {
       historicalUnclassifiedDaily: historicalDaily.results,
       topPages: topPages.results,
       topReferrers: topReferrers.results,
+      sourceChannels: sourceChannels.results,
+      crawlerTotals: crawlerTotals.results[0] ?? { requests: 0 },
+      crawlerDaily: crawlerDaily.results,
+      topCrawlers: topCrawlers.results,
+      crawlerTopPages: crawlerTopPages.results,
     },
     { headers: { "cache-control": "no-store" } },
   );
@@ -145,6 +253,11 @@ async function analyticsReport(request: Request, env: Env) {
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+
+    if ((request.method === "GET" || request.method === "HEAD") && env.DB) {
+      const crawler = detectCrawler(request.headers.get("user-agent") ?? "");
+      if (crawler) ctx.waitUntil(recordCrawlerHit(request, env, crawler));
+    }
 
     if (url.pathname === "/api/analytics") {
       if (request.method === "POST") return recordAnalytics(request, env);

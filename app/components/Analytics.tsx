@@ -18,7 +18,14 @@ export function Analytics() {
       // Analytics remains available when storage is disabled by the browser.
     }
 
-    const payload = JSON.stringify({ path: pathname, referrer: document.referrer, isInternal });
+    const search = new URLSearchParams(window.location.search);
+    const payload = JSON.stringify({
+      path: pathname,
+      referrer: document.referrer,
+      isInternal,
+      utmSource: search.get("utm_source") ?? "",
+      utmMedium: search.get("utm_medium") ?? "",
+    });
     if (navigator.sendBeacon) {
       navigator.sendBeacon("/api/analytics", new Blob([payload], { type: "application/json" }));
       return;

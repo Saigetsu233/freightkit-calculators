@@ -15,6 +15,13 @@
       "when": 1785857295339,
       "tag": "0001_tranquil_ego",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1785901949378,
+      "tag": "0002_narrow_kid_colt",
+      "breakpoints": true
     }
   ]
 }

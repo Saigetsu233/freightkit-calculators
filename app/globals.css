@@ -205,6 +205,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .tool-sources { margin: 25px 0; padding: 20px; border: 1px solid var(--line); background: var(--white); }
 .tool-sources strong { display: block; margin-bottom: 11px; font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; }
 .tool-sources a { display: block; margin-top: 8px; color: var(--blue); font-size: .78rem; text-decoration: underline; text-underline-offset: 3px; }
+.topic-inline-link { display: inline-flex; margin: 10px 0 2px; color: var(--blue); font-weight: 850; text-decoration: underline; text-underline-offset: 4px; }
 .embed-panel { margin-block: 20px 90px; display: grid; grid-template-columns: .85fr 1.15fr; gap: 55px; align-items: center; padding-block: 38px; border-block: 1px solid var(--ink); }
 .embed-panel h2 { margin: 0; font: 500 clamp(2rem,4vw,3.4rem)/1 Georgia,serif; letter-spacing: -.045em; }
 .embed-panel p:not(.eyebrow) { color: var(--muted); line-height: 1.65; }
@@ -280,6 +281,39 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .article-cta h2 { margin: 0; font: 500 2.2rem/1 Georgia,serif; }
 .article-cta p:not(.eyebrow) { color: #bfc2ba; max-width: 560px; }
 
+.home-topics { padding-block: 100px; border-top: 1px solid var(--line); }
+.topic-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 48px; }
+.topic-card-grid > a { min-height: 360px; padding: 28px; border: 1px solid var(--ink); background: var(--white); display: flex; flex-direction: column; }
+.topic-card-grid > a:hover { background: var(--acid); }
+.topic-card-grid span { color: var(--orange-dark); font-size: .66rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.topic-card-grid h3 { margin: 50px 0 18px; font: 500 2rem/1.03 Georgia, serif; letter-spacing: -.04em; }
+.topic-card-grid p { color: var(--muted); font-size: .84rem; line-height: 1.65; }
+.topic-card-grid strong { margin-top: auto; font-size: .76rem; text-decoration: underline; text-underline-offset: 4px; }
+
+.topic-page { padding-block: 55px 110px; }
+.topic-hero { display: grid; grid-template-columns: 1.2fr .8fr; gap: 70px; align-items: end; }
+.topic-hero h1 { margin: 18px 0 0; font: 500 clamp(3.4rem, 7vw, 6.4rem)/.92 Georgia, serif; letter-spacing: -.055em; }
+.topic-answer { padding: 28px; background: var(--acid); border: 1px solid var(--ink); box-shadow: 8px 8px 0 var(--ink); }
+.topic-answer strong { font-size: .7rem; letter-spacing: .09em; text-transform: uppercase; }
+.topic-answer p { margin: 12px 0 0; font: 500 1.22rem/1.5 Georgia, serif; }
+.topic-method { display: grid; grid-template-columns: 1fr 1fr; gap: 45px; margin-top: 90px; padding-block: 55px; border-block: 1px solid var(--ink); }
+.topic-method h2, .topic-guides h2, .topic-sources h2 { margin: 0; font: 500 clamp(2rem, 4vw, 3rem)/1 Georgia, serif; letter-spacing: -.04em; }
+.topic-method p:not(.eyebrow) { color: var(--muted); line-height: 1.75; }
+.topic-tool-cta { display: flex; align-items: center; justify-content: space-between; gap: 45px; margin-top: 70px; padding: 35px; background: var(--blue); color: white; box-shadow: 9px 9px 0 var(--orange); }
+.topic-tool-cta h2 { margin: 0; font: 500 clamp(2rem, 4vw, 3.2rem)/1 Georgia, serif; letter-spacing: -.04em; }
+.topic-tool-cta p:not(.eyebrow) { max-width: 760px; color: #dce2ff; line-height: 1.65; }
+.topic-questions { margin-top: 110px; }
+.topic-question-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin-top: 45px; border: 1px solid var(--ink); background: var(--ink); }
+.topic-question-grid article { min-height: 240px; padding: 28px; background: var(--white); }
+.topic-question-grid h3 { margin: 0; font: 500 1.6rem/1.15 Georgia, serif; }
+.topic-question-grid p { color: var(--muted); line-height: 1.7; }
+.topic-question-grid a { color: var(--blue); font-size: .75rem; font-weight: 850; text-decoration: underline; text-underline-offset: 4px; }
+.topic-guides { margin-top: 100px; }
+.topic-guides > h2 { margin-bottom: 35px; }
+.topic-sources { max-width: 820px; margin-top: 90px; padding-top: 40px; border-top: 1px solid var(--line); }
+.topic-sources p { color: var(--muted); line-height: 1.7; }
+.topic-sources a { display: block; margin-top: 12px; color: var(--blue); font-size: .82rem; text-decoration: underline; text-underline-offset: 3px; }
+
 .resource-hero { padding-bottom: 85px; }
 .product-band { background: var(--ink); color: white; padding-block: 90px; }
 .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 75px; align-items: center; }
@@ -306,7 +340,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .affiliate-note { max-width: 760px; margin-top: 28px; color: var(--muted); font-size: .75rem; line-height: 1.6; }
 
 @media (max-width: 900px) {
-  .hero, .tool-hero, .workflow-grid, .method-section, .home-product-grid, .product-grid, .embed-panel, .embed-calculator { grid-template-columns: 1fr; }
+  .hero, .tool-hero, .workflow-grid, .method-section, .home-product-grid, .product-grid, .embed-panel, .embed-calculator, .topic-hero, .topic-method { grid-template-columns: 1fr; }
   .hero { gap: 48px; padding-top: 58px; }
   .tool-hero { gap: 32px; }
   .tool-meta { border-left: 0; padding-left: 0; }
@@ -320,6 +354,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .home-product-buy { border-left: 0; border-top: 1px solid rgba(255,255,255,.5); padding: 35px 0 0; }
   .guide-grid { grid-template-columns: repeat(2,1fr); }
   .article-cta { align-items: flex-start; flex-direction: column; }
+  .topic-card-grid { grid-template-columns: 1fr; }
+  .topic-tool-cta { align-items: flex-start; flex-direction: column; }
 }
 
 @media (max-width: 640px) {
@@ -339,7 +375,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .signal-grid span { margin-top: 6px; font-size: .61rem; }
   .tools-section { padding-block: 75px; }
   .tool-grid { grid-template-columns: 1fr; }
-  .home-guide-grid, .guide-grid, .partner-grid, .tool-guide-grid { grid-template-columns: 1fr; }
+  .home-guide-grid, .guide-grid, .partner-grid, .tool-guide-grid, .topic-question-grid { grid-template-columns: 1fr; }
   .tool-card { min-height: 285px; padding: 23px; }
   .workflow-section { padding-block: 75px; }
   .workflow-grid { gap: 45px; }

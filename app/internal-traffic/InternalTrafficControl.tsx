@@ -7,11 +7,15 @@ export function InternalTrafficControl() {
   const [isInternal, setIsInternal] = useState<boolean | null>(null);
 
   useEffect(() => {
+    let active = true;
+    let storedValue = false;
     try {
-      setIsInternal(window.localStorage.getItem(INTERNAL_TRAFFIC_STORAGE_KEY) === "1");
+      storedValue = window.localStorage.getItem(INTERNAL_TRAFFIC_STORAGE_KEY) === "1";
     } catch {
-      setIsInternal(false);
+      storedValue = false;
     }
+    window.queueMicrotask(() => { if (active) setIsInternal(storedValue); });
+    return () => { active = false; };
   }, []);
 
   function update(enabled: boolean) {

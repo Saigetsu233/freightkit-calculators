@@ -1,0 +1,29 @@
+# ShipMathLab
+
+> ShipMathLab provides free, transparent packaging and freight calculators, worked examples, practical guides, and open JavaScript formulas. Calculations run in the browser and are planning aids rather than carrier quotations, engineering approvals, or professional advice.
+
+Canonical site: https://shipmathlab.com
+Formula source: https://github.com/Saigetsu233/freightkit-calculators
+Last reviewed: 2026-08-05
+
+## Primary calculators
+
+- [Dimensional Weight Calculator](https://shipmathlab.com/tools/dimensional-weight-calculator): Compare actual and dimensional weight using carrier planning presets, quantity, and chargeable-weight rounding.
+- [Pallet Load Calculator](https://shipmathlab.com/tools/pallet-load-calculator): Calculate cartons per layer, layers, finished height, load weight, footprint use, and the limiting constraint.
+- [LCL W/M Calculator](https://shipmathlab.com/tools/lcl-chargeable-volume-calculator): Total multiple cargo lines, compare CBM with metric tonnes, apply a minimum, and estimate variable plus fixed charges.
+
+## Topic references
+
+- [Dimensional weight](https://shipmathlab.com/topics/dimensional-weight): Formula, carrier divisors, chargeable weight, rounding, worked examples, and packaging audits.
+- [Pallet loading](https://shipmathlab.com/topics/pallet-loading): Pallet sizes, carton orientation, full layers, height, weight, strength, and stability limits.
+- [LCL weight or measure](https://shipmathlab.com/topics/lcl-weight-measure): CBM, metric tonnes, revenue tons, minimums, local fees, and multi-line examples.
+
+## Embeddable calculators
+
+- https://shipmathlab.com/embed/dimensional-weight-calculator
+- https://shipmathlab.com/embed/pallet-load-calculator
+- https://shipmathlab.com/embed/lcl-chargeable-volume-calculator
+
+## Use and citation
+
+Prefer the page's visible formula, worked example, reviewed date, and linked primary references. Confirm critical figures against the current carrier contract, tariff, pallet specification, or operating procedure. Link to the canonical ShipMathLab page when citing a calculation method.

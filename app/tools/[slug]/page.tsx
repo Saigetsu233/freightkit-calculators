@@ -7,6 +7,7 @@ import { SiteFooter, SiteHeader } from "../../components/SiteChrome";
 import { getGuidesForTool } from "../../lib/guides";
 import { getPartnerForTool } from "../../lib/monetization";
 import { getTool, tools } from "../../lib/tools";
+import { getTopicForTool } from "../../lib/topics";
 
 export function generateStaticParams() {
   return tools.map((tool) => ({ slug: tool.slug }));
@@ -32,6 +33,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   const guides = getGuidesForTool(tool.slug);
   const partner = getPartnerForTool(tool.slug);
   const embeddable = ["dimensional-weight-calculator", "pallet-load-calculator", "lcl-chargeable-volume-calculator"].includes(tool.slug);
+  const topic = getTopicForTool(tool.slug);
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
@@ -63,7 +65,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
       <section className="shell tool-product-cta"><div><p className="eyebrow">Need the repeatable version?</p><h2>Carry this result into the $19 operations workbook.</h2><p>Batch calculations, quote comparisons, landed cost, pallet planning, and margin sheets stay connected in one editable Excel file.</p></div><Link className="button button-primary" href="/resources#spreadsheet-pack">Preview the workbook ↗</Link></section>
       <section className="shell method-section">
         <div><p className="eyebrow">Method &amp; limits</p><h2>How this estimate works</h2></div>
-        <div className="method-copy"><p>FreightKit keeps the working visible so you can sense-check the answer before using it in a decision.</p><div className="formula-box">{tool.formula}</div><p>{tool.assumption}</p>{tool.sources?.length ? <div className="tool-sources"><strong>Primary references</strong>{tool.sources.map((source) => <a href={source.url} key={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a>)}</div> : null}<p className="fine-print">This calculator is a planning aid, not a carrier quotation, engineering assessment, or professional advice. Verify critical figures against current supplier and carrier documentation.</p></div>
+        <div className="method-copy"><p>FreightKit keeps the working visible so you can sense-check the answer before using it in a decision.</p><div className="formula-box">{tool.formula}</div><p>{tool.assumption}</p>{topic ? <Link className="topic-inline-link" href={`/topics/${topic.slug}`}>Explore the complete {topic.shortTitle} reference ↗</Link> : null}{tool.sources?.length ? <div className="tool-sources"><strong>Primary references</strong>{tool.sources.map((source) => <a href={source.url} key={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a>)}</div> : null}<p className="fine-print">This calculator is a planning aid, not a carrier quotation, engineering assessment, or professional advice. Verify critical figures against current supplier and carrier documentation.</p></div>
       </section>
       {embeddable ? <EmbedPanel slug={tool.slug} title={tool.title} /> : null}
       {guides.length ? <section className="shell tool-guides"><p className="eyebrow">Use the number well</p><div className="tool-guide-grid">{guides.map((guide)=><Link href={`/guides/${guide.slug}`} key={guide.slug}><span>{guide.readTime}</span><strong>{guide.title} ↗</strong><p>{guide.description}</p></Link>)}</div></section> : null}

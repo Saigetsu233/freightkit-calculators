@@ -27,6 +27,9 @@ export async function generateMetadata(): Promise<Metadata> {
     ],
     verification: {
       google: "NyUKa8vAgyDXfVy6b7JdSnifHTCoSMHJIlmDToOIETM",
+      other: {
+        "msvalidate.01": "EE39BE120044E7CAB9E9F93ABD6EACF6",
+      },
     },
     openGraph: {
       type: "website",

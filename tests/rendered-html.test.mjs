@@ -125,3 +125,21 @@ test("new search clusters render and link to their calculators", async () => {
     assert.match(await response.text(), new RegExp(`/tools/${toolSlug}`), guideSlug);
   }
 });
+
+test("three topic hubs render citation-ready answers and structured data", async () => {
+  const topicRoutes = [
+    ["dimensional-weight", "dimensional-weight-calculator", "What is dimensional weight?"],
+    ["pallet-loading", "pallet-load-calculator", "How many cartons fit on a pallet?"],
+    ["lcl-weight-measure", "lcl-chargeable-volume-calculator", "What does W/M mean in LCL freight?"],
+  ];
+
+  for (const [topicSlug, toolSlug, question] of topicRoutes) {
+    const response = await render(`/topics/${topicSlug}`);
+    assert.equal(response.status, 200, topicSlug);
+    const html = await response.text();
+    assert.match(html, /Quick answer/, topicSlug);
+    assert.match(html, new RegExp(escapeRegExp(question)), topicSlug);
+    assert.match(html, new RegExp(`/tools/${toolSlug}`), topicSlug);
+    assert.match(html, /FAQPage/, topicSlug);
+  }
+});
