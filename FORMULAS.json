@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "FreightKit calculator formulas",
+  "version": "1.1.0",
+  "license": "MIT",
+  "canonicalSite": "https://shipmathlab.com",
+  "lastReviewed": "2026-08-05",
+  "calculators": [
+    {
+      "id": "dimensional-weight",
+      "name": "Dimensional and chargeable parcel weight",
+      "canonicalUrl": "https://shipmathlab.com/tools/dimensional-weight-calculator",
+      "topicUrl": "https://shipmathlab.com/topics/dimensional-weight",
+      "formula": "dimensionalWeight = length * width * height / divisor; chargeableWeight = max(actualWeight, dimensionalWeight)",
+      "units": "Use dimensions and divisor from the same unit system; result matches the divisor's weight unit.",
+      "assumptions": ["Finished outside dimensions", "Carrier and service-specific divisor", "Per-parcel rounding when required"],
+      "sourceFunction": "calculateDimensionalWeight"
+    },
+    {
+      "id": "pallet-load",
+      "name": "Straight-row pallet load",
+      "canonicalUrl": "https://shipmathlab.com/tools/pallet-load-calculator",
+      "topicUrl": "https://shipmathlab.com/topics/pallet-loading",
+      "formula": "totalCartons = min(cartonsPerLayer * fullLayers, floor(maximumLoadWeight / cartonWeight))",
+      "units": "All length inputs use one consistent unit; all weight inputs use one consistent unit.",
+      "assumptions": ["Identical rectangular cartons", "Two right-angle straight-row orientations", "No overhang", "Geometry is not a safety approval"],
+      "sourceFunction": "calculatePalletLoad"
+    },
+    {
+      "id": "lcl-weight-measure",
+      "name": "Ocean LCL weight or measure",
+      "canonicalUrl": "https://shipmathlab.com/tools/lcl-chargeable-volume-calculator",
+      "topicUrl": "https://shipmathlab.com/topics/lcl-weight-measure",
+      "formula": "rawWm = max(totalCbm, grossMetricTonnes); chargeableWm = max(rawWm, quotedMinimum)",
+      "units": "Cargo dimensions are centimetres, gross weight is kilograms, volume is cubic metres, and comparison weight is metric tonnes.",
+      "assumptions": ["Tariff-specific W/M rule", "Quoted minimum and rounding", "Fixed and per-W/M fees separated"],
+      "sourceFunction": "calculateLclWeightMeasure"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use these calculator methods, cite the repository and the matching ShipMathLab topic reference."
+title: "FreightKit Calculators"
+type: software
+authors:
+  - name: "Saigetsu233"
+version: 1.1.0
+date-released: 2026-08-05
+url: "https://github.com/Saigetsu233/freightkit-calculators"
+repository-code: "https://github.com/Saigetsu233/freightkit-calculators"
+license: MIT
+keywords:
+  - dimensional weight
+  - pallet loading
+  - LCL freight
+  - logistics calculator
