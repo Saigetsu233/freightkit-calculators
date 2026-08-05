@@ -33,6 +33,15 @@ console.log(result.totalChargeableWeight); // 280
 ```
 
 See [FORMULAS.md](FORMULAS.md) for equations, assumptions, worked examples, and primary references.
+For machine-readable discovery, [FORMULAS.json](FORMULAS.json) exposes the same three methods, canonical calculator URLs, input units, assumptions, and reference links without requiring JavaScript execution.
+
+## Stable citation links
+
+- Dimensional weight: <https://shipmathlab.com/topics/dimensional-weight>
+- Pallet loading: <https://shipmathlab.com/topics/pallet-loading>
+- LCL weight or measure: <https://shipmathlab.com/topics/lcl-weight-measure>
+
+When citing a method, link to the matching topic reference or calculator and retain the stated assumptions. The repository also includes [CITATION.cff](CITATION.cff) for citation-aware tools.
 
 ## Embed a calculator
 

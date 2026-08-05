@@ -1,10 +1,16 @@
 {
   "name": "freightkit-calculators",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Transparent dimensional-weight, pallet-load, and LCL W/M formulas used by FreightKit.",
   "type": "module",
   "main": "src/index.js",
   "exports": "./src/index.js",
+  "files": [
+    "src",
+    "FORMULAS.md",
+    "FORMULAS.json",
+    "LICENSE"
+  ],
   "scripts": {
     "test": "node --test"
   },
@@ -13,7 +19,10 @@
     "dimensional-weight",
     "pallet",
     "lcl",
-    "calculator"
+    "calculator",
+    "shipping",
+    "logistics",
+    "embeddable"
   ],
   "license": "MIT"
 }
