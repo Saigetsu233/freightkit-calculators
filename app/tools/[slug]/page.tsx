@@ -9,6 +9,21 @@ import { getPartnerForTool } from "../../lib/monetization";
 import { getTool, tools } from "../../lib/tools";
 import { getTopicForTool } from "../../lib/topics";
 
+const taxRecommendations: Record<string, { title: string; description: string; href: string; label: string }> = {
+  "ecommerce-margin-calculator": {
+    title: "Check the transaction tax behind the selling price.",
+    description: "TaxMathKit can add a verified sales-tax rate to a price or recover the pre-tax amount from a tax-inclusive total, with both formulas shown.",
+    href: "https://taxmathkit.com/tools/sales-tax-calculator?utm_source=shipmathlab&utm_medium=referral&utm_campaign=tool-network",
+    label: "Open the sales-tax calculator",
+  },
+  "landed-cost-calculator": {
+    title: "Need to add or extract VAT before finalizing landed cost?",
+    description: "TaxMathKit provides a currency-neutral VAT calculator with add and remove modes, visible formulas, rate presets, and a custom-rate input.",
+    href: "https://taxmathkit.com/tools/vat-calculator?utm_source=shipmathlab&utm_medium=referral&utm_campaign=tool-network",
+    label: "Open the VAT calculator",
+  },
+};
+
 export function generateStaticParams() {
   return tools.map((tool) => ({ slug: tool.slug }));
 }
@@ -34,6 +49,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   const partner = getPartnerForTool(tool.slug);
   const embeddable = ["dimensional-weight-calculator", "pallet-load-calculator", "lcl-chargeable-volume-calculator"].includes(tool.slug);
   const topic = getTopicForTool(tool.slug);
+  const taxRecommendation = taxRecommendations[tool.slug];
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
@@ -67,6 +83,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
         <div><p className="eyebrow">Method &amp; limits</p><h2>How this estimate works</h2></div>
         <div className="method-copy"><p>FreightKit keeps the working visible so you can sense-check the answer before using it in a decision.</p><div className="formula-box">{tool.formula}</div><p>{tool.assumption}</p>{topic ? <Link className="topic-inline-link" href={`/topics/${topic.slug}`}>Explore the complete {topic.shortTitle} reference ↗</Link> : null}{tool.sources?.length ? <div className="tool-sources"><strong>Primary references</strong>{tool.sources.map((source) => <a href={source.url} key={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a>)}</div> : null}<p className="fine-print">This calculator is a planning aid, not a carrier quotation, engineering assessment, or professional advice. Verify critical figures against current supplier and carrier documentation.</p></div>
       </section>
+      {taxRecommendation ? <section className="shell network-inline"><div><span>Related tax calculation · TaxMathKit</span><h2>{taxRecommendation.title}</h2><p>{taxRecommendation.description}</p></div><a className="text-link" href={taxRecommendation.href}>{taxRecommendation.label} ↗</a></section> : null}
       {embeddable ? <EmbedPanel slug={tool.slug} title={tool.title} /> : null}
       {guides.length ? <section className="shell tool-guides"><p className="eyebrow">Use the number well</p><div className="tool-guide-grid">{guides.map((guide)=><Link href={`/guides/${guide.slug}`} key={guide.slug}><span>{guide.readTime}</span><strong>{guide.title} ↗</strong><p>{guide.description}</p></Link>)}</div></section> : null}
       {partner?.url ? <section className="shell partner-inline"><span>Relevant partner resource</span><div><h2>{partner.name}</h2><p>{partner.description}</p></div><a className="text-link" href={partner.url} target="_blank" rel="sponsored noopener noreferrer">View recommendation ↗</a></section> : null}

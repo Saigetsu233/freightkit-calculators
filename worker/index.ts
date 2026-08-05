@@ -72,6 +72,7 @@ function classifySource(referrerHost: string, utmSource: string) {
   if (source.includes("chatgpt") || source.includes("openai")) return "ChatGPT";
   if (source.includes("perplexity")) return "Perplexity";
   if (source.includes("copilot")) return "Copilot";
+  if (source.includes("taxmathkit")) return "TaxMathKit";
   if (source.includes("google")) return "Google";
   if (source.includes("bing")) return "Bing";
   if (source.includes("github")) return "GitHub";

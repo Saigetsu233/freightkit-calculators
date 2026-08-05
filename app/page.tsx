@@ -98,6 +98,13 @@ export default function Home() {
         <div className="topic-card-grid">{topics.map((topic)=><Link href={`/topics/${topic.slug}`} key={topic.slug}><span>{topic.category}</span><h3>{topic.title}</h3><p>{topic.description}</p><strong>Open topic reference ↗</strong></Link>)}</div>
       </section>
 
+      <section className="network-band">
+        <div className="shell network-band-inner">
+          <div><p className="eyebrow">More tools from the same maker</p><h2>Need to calculate the tax side too?</h2><p>TaxMathKit provides transparent calculators for federal income, 1099 work, sales tax, reverse tax, capital gains, and VAT.</p></div>
+          <a className="button button-primary" href="https://taxmathkit.com/?utm_source=shipmathlab&utm_medium=referral&utm_campaign=tool-network">Explore TaxMathKit <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+
       <section className="home-product"><div className="shell home-product-grid"><div><p className="eyebrow eyebrow-light">FreightKit Operations Workbook</p><h2>Keep the free tools.<br/>Buy the repeatable workflow.</h2><p>Batch DIM checks, freight quotes, pallet plans, landed cost, and ecommerce margin—connected in one editable Excel workbook.</p></div><div className="home-product-buy"><strong>$19</strong><span>one-time · no subscription</span><Link className="button button-acid" href="/resources#spreadsheet-pack">See what&apos;s included ↗</Link></div></div></section>
 
       <section className="workflow-section">
