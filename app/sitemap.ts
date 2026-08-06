@@ -13,6 +13,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...topics.map((topic) => ({ url: `${base}/topics/${topic.slug}`, changeFrequency: "monthly" as const, priority: .9 })),
     { url: `${base}/resources`, changeFrequency: "monthly", priority: .7 },
     { url: `${base}/about`, changeFrequency: "yearly", priority: .3 },
+    { url: `${base}/methodology`, changeFrequency: "monthly", priority: .6 },
+    { url: `${base}/changelog`, changeFrequency: "monthly", priority: .5 },
     { url: `${base}/privacy`, changeFrequency: "yearly", priority: .2 },
   ];
 }

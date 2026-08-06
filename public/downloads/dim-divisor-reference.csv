@@ -1,0 +1,6 @@
+carrier,service_context,unit_system,published_divisor,planning_formula,reviewed,official_source,important_limit
+FedEx,US package planning,imperial,139,"L×W×H (in) ÷ 139",2026-08-06,https://www.fedex.com/en-us/shipping/packaging/what-is-dimensional-weight.html,"Confirm current service, rate type, measurement rounding, and billing increment"
+UPS,Daily Rates package planning,imperial,139,"L×W×H (in) ÷ 139",2026-08-06,https://developer.ups.com/us/en/support/shipping-support/shipping-dimensions-weight,"Retail Rates may use a different divisor; confirm the account rate guide"
+UPS,Retail Rates package planning,imperial,166,"L×W×H (in) ÷ 166",2026-08-06,https://developer.ups.com/us/en/support/shipping-support/shipping-dimensions-weight,"Eligibility and current published rules control"
+DHL Express,International express planning,metric,5000,"L×W×H (cm) ÷ 5000",2026-08-06,https://www.dhl.com/discover/en-gb/ship-with-dhl/products-and-services/weight-and-dimensions,"Confirm product-specific divisor and rounding in the current quote"
+USPS,Eligible domestic packages,imperial,166,"L×W×H (in) ÷ 166",2026-08-06,https://pe.usps.com/text/dmm300/Notice123.htm,"DIM eligibility, zone, size, and mail class rules apply"

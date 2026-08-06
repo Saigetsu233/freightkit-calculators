@@ -4,7 +4,10 @@
 
 Canonical site: https://shipmathlab.com
 Formula source: https://github.com/Saigetsu233/freightkit-calculators
-Last reviewed: 2026-08-05
+Method and source review: https://shipmathlab.com/methodology
+Version log: https://shipmathlab.com/changelog
+Downloadable references: https://shipmathlab.com/resources
+Last reviewed: 2026-08-06
 
 ## Primary calculators
 

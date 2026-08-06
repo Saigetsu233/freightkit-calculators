@@ -1,0 +1,7 @@
+pallet_family,length_mm,width_mm,carton_length_mm,carton_width_mm,straight_rows_orientation,cartons_per_layer,calculation,reviewed,reference
+Euro EPAL 1,1200,800,400,300,400 along 1200,8,"floor(1200/400) × floor(800/300) = 3 × 2 = 6; rotated = 4 × 2 = 8",2026-08-06,https://www.epal-pallets.org/eu-en/load-carriers/epal-euro-pallet
+Euro EPAL 1,1200,800,600,400,600 along 1200,4,"floor(1200/600) × floor(800/400) = 2 × 2 = 4",2026-08-06,https://www.epal-pallets.org/eu-en/load-carriers/epal-euro-pallet
+GMA 48×40,1219,1016,406,305,406 along 1219,9,"floor(1219/406) × floor(1016/305) = 3 × 3 = 9",2026-08-06,https://www.iso.org/standard/30524.html
+GMA 48×40,1219,1016,610,406,610 along 1219,4,"floor(1219/610) × floor(1016/406) = 1 × 2 = 2; rotated = 3 × 1 = 3; verify actual inch dimensions",2026-08-06,https://www.iso.org/standard/30524.html
+Industrial ISO,1200,1000,400,300,400 along 1200,9,"floor(1200/400) × floor(1000/300) = 3 × 3 = 9",2026-08-06,https://www.iso.org/standard/30524.html
+Industrial ISO,1200,1000,600,400,600 along 1200,4,"floor(1200/600) × floor(1000/400) = 2 × 2 = 4",2026-08-06,https://www.iso.org/standard/30524.html

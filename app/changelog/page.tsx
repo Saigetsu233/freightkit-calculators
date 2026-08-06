@@ -1,0 +1,8 @@
+import type { Metadata } from "next";
+import { SiteFooter, SiteHeader } from "../components/SiteChrome";
+
+export const metadata: Metadata = { title: "Version & Source Review Log", description: "ShipMathLab formula, source-review, and product release notes.", alternates: { canonical: "/changelog" } };
+
+export default function ChangelogPage() {
+  return <main><SiteHeader/><div className="shell legal-page"><p className="updated">Version log</p><h1>What changed, and why.</h1><div className="change-list"><article><time dateTime="2026-08-06">August 6, 2026 · v1.3</time><h2>Reference assets and measurable distribution</h2><ul><li>Added DIM-divisor, pallet-dimension, and LCL quote-audit downloads.</li><li>Added formula flow diagrams, print actions, copy-result events, embed-source analytics, and maintained-source records.</li><li>Reviewed FedEx, UPS, DHL, USPS, EPAL, ISO, and Maersk reference links for the three priority tools.</li></ul></article><article><time dateTime="2026-08-05">August 5, 2026 · v1.2</time><h2>Priority tool clusters</h2><ul><li>Expanded dimensional weight, pallet load, and LCL W/M with worked examples, error checks, and four distinct guides each.</li><li>Published three no-key iframe calculators and the open formula repository.</li></ul></article><article><time dateTime="2026-08-03">August 3, 2026 · v1.0</time><h2>Public launch</h2><ul><li>Released the original freight, packaging, inventory, warehouse, and ecommerce calculator collection.</li></ul></article></div></div><SiteFooter/></main>;
+}

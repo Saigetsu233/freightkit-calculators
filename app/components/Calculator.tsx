@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { DimensionalWeightPro, LclChargePro, PalletLoadPro } from "./FocusCalculators";
+import { trackAnalyticsEvent } from "./Analytics";
 
 type Metric = { label: string; value: string };
 
@@ -57,6 +58,7 @@ function ResultPanel({ label, primary, metrics, note }: { label: string; primary
   async function copyResult() {
     try {
       await navigator.clipboard.writeText(summary);
+      trackAnalyticsEvent("copy_result", window.location.pathname.replace(/^\/(tools|embed)\//, ""));
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1800);
     } catch {
@@ -72,7 +74,7 @@ function ResultPanel({ label, primary, metrics, note }: { label: string; primary
         {metrics.map((metric) => <div className="result-metric" key={metric.label}><span>{metric.label}</span><strong>{metric.value}</strong></div>)}
       </div>
       <p className="result-note">{note}</p>
-      <button type="button" className="copy-button" onClick={copyResult}>{copied ? "Copied to clipboard ✓" : "Copy result summary"}</button>
+      <div className="result-actions"><button type="button" className="copy-button" onClick={copyResult}>{copied ? "Copied to clipboard ✓" : "Copy result summary"}</button><button type="button" className="copy-button" onClick={() => window.print()}>Print result</button></div>
     </aside>
   );
 }

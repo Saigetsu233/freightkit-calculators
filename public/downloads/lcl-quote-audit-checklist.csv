@@ -1,0 +1,11 @@
+section,check,example_or_action,why_it_matters
+Cargo,Recalculate CBM per cargo line,"100×80×70 cm × 2 ÷ 1000000 = 1.120 CBM",Prevents unit and quantity errors
+Cargo,Recalculate gross metric tonnes,"850 kg ÷ 1000 = 0.850 metric tonnes",Creates the weight side of W/M
+W/M,Use the larger of CBM and tonnes,"max(1.120,0.850) = 1.120 W/M",Typical weight-or-measure comparison
+W/M,Apply quoted minimum,"max(1.120,1.000 minimum) = 1.120",Minimums can control small shipments
+Variable charges,List every per-W/M line,"Ocean 75 + surcharge 18 = 93 per W/M",Avoids comparing only the ocean line
+Fixed charges,List origin fixed charges,"CFS handling, documentation, pickup",Fixed fees dominate small LCL moves
+Fixed charges,List destination fixed charges,"CFS, documentation, delivery, customs-related service fees",Destination omissions create false comparisons
+Currency,Keep one currency or record FX basis,"Quote currency USD; FX date recorded separately",Prevents hidden exchange assumptions
+Rules,Record tariff rounding and density rule,"Round W/M to 0.001; quote-specific rule",The carrier or forwarder tariff controls
+Final,Rebuild all-in estimate,"1.120×93 + 240 fixed = 344.16",Creates a reproducible comparison total

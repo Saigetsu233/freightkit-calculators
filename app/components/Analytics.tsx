@@ -5,38 +5,78 @@ import { useEffect } from "react";
 
 export const INTERNAL_TRAFFIC_STORAGE_KEY = "freightkit-internal-traffic";
 
+function isInternalBrowser() {
+  try {
+    return window.localStorage.getItem(INTERNAL_TRAFFIC_STORAGE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function send(payload: Record<string, unknown>) {
+  const body = JSON.stringify(payload);
+  if (navigator.sendBeacon) {
+    navigator.sendBeacon("/api/analytics", new Blob([body], { type: "application/json" }));
+    return;
+  }
+  void fetch("/api/analytics", { method: "POST", headers: { "content-type": "application/json" }, body, keepalive: true });
+}
+
+export function trackAnalyticsEvent(eventType: "tool_open" | "calculation_completed" | "copy_result" | "guide_to_tool" | "embed_view", eventLabel = "", sourceHost = "") {
+  if (typeof window === "undefined" || navigator.doNotTrack === "1") return;
+  send({ path: window.location.pathname, isInternal: isInternalBrowser(), eventType, eventLabel, sourceHost });
+}
+
 export function Analytics() {
   const pathname = usePathname();
 
   useEffect(() => {
     if (!pathname || pathname === "/internal-traffic" || navigator.doNotTrack === "1") return;
 
-    let isInternal = false;
-    try {
-      isInternal = window.localStorage.getItem(INTERNAL_TRAFFIC_STORAGE_KEY) === "1";
-    } catch {
-      // Analytics remains available when storage is disabled by the browser.
-    }
+    const isInternal = isInternalBrowser();
 
     const search = new URLSearchParams(window.location.search);
-    const payload = JSON.stringify({
+    const payload = {
       path: pathname,
       referrer: document.referrer,
       isInternal,
       utmSource: search.get("utm_source") ?? "",
       utmMedium: search.get("utm_medium") ?? "",
-    });
-    if (navigator.sendBeacon) {
-      navigator.sendBeacon("/api/analytics", new Blob([payload], { type: "application/json" }));
+    };
+    send(payload);
+
+    if (pathname.startsWith("/embed/")) {
+      trackAnalyticsEvent("embed_view", pathname.replace("/embed/", ""), document.referrer);
       return;
     }
-
-    void fetch("/api/analytics", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: payload,
-      keepalive: true,
-    });
+    if (pathname.startsWith("/tools/")) {
+      trackAnalyticsEvent("tool_open", pathname.replace("/tools/", ""));
+      let sentCompletion = false;
+      let timer = 0;
+      const recordCompletion = (event: Event) => {
+        if (sentCompletion || !(event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement)) return;
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => {
+          sentCompletion = true;
+          trackAnalyticsEvent("calculation_completed", pathname.replace("/tools/", ""));
+        }, 700);
+      };
+      document.addEventListener("input", recordCompletion, { passive: true });
+      document.addEventListener("change", recordCompletion, { passive: true });
+      return () => {
+        window.clearTimeout(timer);
+        document.removeEventListener("input", recordCompletion);
+        document.removeEventListener("change", recordCompletion);
+      };
+    }
+    if (pathname.startsWith("/guides/")) {
+      const recordGuideExit = (event: MouseEvent) => {
+        const anchor = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a[href^="/tools/"]') : null;
+        if (anchor) trackAnalyticsEvent("guide_to_tool", anchor.getAttribute("href") ?? "");
+      };
+      document.addEventListener("click", recordGuideExit);
+      return () => document.removeEventListener("click", recordGuideExit);
+    }
   }, [pathname]);
 
   return null;

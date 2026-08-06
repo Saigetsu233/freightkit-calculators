@@ -132,6 +132,9 @@ async function recordAnalytics(request: Request, env: Env) {
 
     const payload = (await request.json()) as {
       path?: unknown;
+      eventType?: unknown;
+      eventLabel?: unknown;
+      sourceHost?: unknown;
       referrer?: unknown;
       isInternal?: unknown;
       utmSource?: unknown;
@@ -142,6 +145,16 @@ async function recordAnalytics(request: Request, env: Env) {
 
     const eventDate = new Date().toISOString().slice(0, 10);
     const visitorHash = await dailyVisitorHash(eventDate, request, env.ANALYTICS_SALT);
+    const allowedEvents = new Set(["tool_open", "calculation_completed", "copy_result", "guide_to_tool", "embed_view"]);
+    const eventType = typeof payload.eventType === "string" && allowedEvents.has(payload.eventType) ? payload.eventType : "";
+    if (eventType) {
+      const eventLabel = typeof payload.eventLabel === "string" ? payload.eventLabel.trim().slice(0, 160) : "";
+      const sourceHost = normalizeReferrerHost(payload.sourceHost);
+      await env.DB.prepare(
+        "INSERT INTO interaction_events (event_date, path, event_type, event_label, source_host, visitor_hash, is_internal) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      ).bind(eventDate, path, eventType, eventLabel, sourceHost, visitorHash, payload.isInternal === true ? 1 : 0).run();
+      return new Response(null, { status: 204 });
+    }
     const referrerHost = normalizeReferrerHost(payload.referrer);
     const utmSource = normalizeCampaignValue(payload.utmSource);
     await env.DB.prepare(
@@ -182,6 +195,9 @@ async function analyticsReport(request: Request, env: Env) {
     crawlerDaily,
     topCrawlers,
     crawlerTopPages,
+    eventTotals,
+    eventTopPages,
+    embedSources,
   ] = await env.DB.batch([
     env.DB.prepare(
       "SELECT COUNT(*) AS views, COUNT(DISTINCT visitor_hash) AS daily_unique_visitors FROM page_views WHERE event_date >= ? AND is_internal = 0",
@@ -222,6 +238,15 @@ async function analyticsReport(request: Request, env: Env) {
     env.DB.prepare(
       "SELECT crawler, path, COUNT(*) AS requests FROM crawler_hits WHERE event_date >= ? GROUP BY crawler, path ORDER BY requests DESC LIMIT 30",
     ).bind(startDate),
+    env.DB.prepare(
+      "SELECT event_type AS event, COUNT(*) AS events, COUNT(DISTINCT visitor_hash) AS daily_unique_users FROM interaction_events WHERE event_date >= ? AND is_internal = 0 GROUP BY event_type ORDER BY events DESC",
+    ).bind(startDate),
+    env.DB.prepare(
+      "SELECT event_type AS event, path, event_label AS label, COUNT(*) AS events FROM interaction_events WHERE event_date >= ? AND is_internal = 0 GROUP BY event_type, path, event_label ORDER BY events DESC LIMIT 50",
+    ).bind(startDate),
+    env.DB.prepare(
+      "SELECT source_host AS host, COUNT(*) AS embeds FROM interaction_events WHERE event_date >= ? AND is_internal = 0 AND event_type = 'embed_view' AND source_host <> '' GROUP BY source_host ORDER BY embeds DESC LIMIT 20",
+    ).bind(startDate),
   ]);
 
   return Response.json(
@@ -240,6 +265,9 @@ async function analyticsReport(request: Request, env: Env) {
       crawlerDaily: crawlerDaily.results,
       topCrawlers: topCrawlers.results,
       crawlerTopPages: crawlerTopPages.results,
+      eventTotals: eventTotals.results,
+      eventTopPages: eventTopPages.results,
+      embedSources: embedSources.results,
     },
     { headers: { "cache-control": "no-store" } },
   );

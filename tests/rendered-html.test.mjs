@@ -69,7 +69,7 @@ test("all twenty calculator routes render their working interface", async () => 
 });
 
 test("supporting trust pages render", async () => {
-  for (const [path, expected] of [["/about", "Useful answers"], ["/privacy", "Privacy, in plain English"], ["/internal-traffic", "Keep our visits out of public traffic"]]) {
+  for (const [path, expected] of [["/about", "Useful answers"], ["/methodology", "Trace the answer"], ["/changelog", "What changed"], ["/privacy", "Privacy, in plain English"], ["/internal-traffic", "Keep our visits out of public traffic"]]) {
     const response = await render(path);
     assert.equal(response.status, 200);
     assert.match(await response.text(), new RegExp(expected));
@@ -93,6 +93,8 @@ test("guides and monetisation resources render", async () => {
   assert.match(resourceHtml, /FreightKit Operations Workbook/);
   assert.match(resourceHtml, /product-price[^>]*>\$<!-- -->19/);
   assert.match(resourceHtml, /checkout not connected/);
+  assert.match(resourceHtml, /dim-divisor-reference\.csv/);
+  assert.match(resourceHtml, /lcl-quote-audit-checklist\.csv/);
 });
 
 test("focus tools expose trusted references and free embeds", async () => {
@@ -103,6 +105,7 @@ test("focus tools expose trusted references and free embeds", async () => {
     assert.match(toolHtml, /Free to embed/, slug);
     assert.match(toolHtml, /Primary references/, slug);
     assert.match(toolHtml, /application\/ld\+json/, slug);
+    assert.match(toolHtml, /formula-flow/, slug);
 
     const embed = await render(`/embed/${slug}`);
     assert.equal(embed.status, 200, `embed ${slug}`);

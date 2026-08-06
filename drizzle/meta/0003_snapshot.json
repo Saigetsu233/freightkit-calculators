@@ -1,0 +1,274 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "34a02225-76f7-4d74-80dd-a0192049bffc",
+  "prevId": "6a9abc18-f75a-473d-bf02-9946dea93da5",
+  "tables": {
+    "crawler_hits": {
+      "name": "crawler_hits",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "event_date": {
+          "name": "event_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "crawler": {
+          "name": "crawler",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "path": {
+          "name": "path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "idx_crawler_hits_event_date": {
+          "name": "idx_crawler_hits_event_date",
+          "columns": [
+            "event_date"
+          ],
+          "isUnique": false
+        },
+        "idx_crawler_hits_event_date_crawler": {
+          "name": "idx_crawler_hits_event_date_crawler",
+          "columns": [
+            "event_date",
+            "crawler"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "interaction_events": {
+      "name": "interaction_events",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "event_date": {
+          "name": "event_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "path": {
+          "name": "path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "event_type": {
+          "name": "event_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'calculation_completed'"
+        },
+        "event_label": {
+          "name": "event_label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "''"
+        },
+        "source_host": {
+          "name": "source_host",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "''"
+        },
+        "visitor_hash": {
+          "name": "visitor_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "is_internal": {
+          "name": "is_internal",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "idx_interactions_event_date": {
+          "name": "idx_interactions_event_date",
+          "columns": [
+            "event_date"
+          ],
+          "isUnique": false
+        },
+        "idx_interactions_event_date_path": {
+          "name": "idx_interactions_event_date_path",
+          "columns": [
+            "event_date",
+            "path"
+          ],
+          "isUnique": false
+        },
+        "idx_interactions_event_type": {
+          "name": "idx_interactions_event_type",
+          "columns": [
+            "event_date",
+            "event_type"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "page_views": {
+      "name": "page_views",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "event_date": {
+          "name": "event_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "path": {
+          "name": "path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "referrer_host": {
+          "name": "referrer_host",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "''"
+        },
+        "source_channel": {
+          "name": "source_channel",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "''"
+        },
+        "visitor_hash": {
+          "name": "visitor_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "is_internal": {
+          "name": "is_internal",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "idx_page_views_event_date": {
+          "name": "idx_page_views_event_date",
+          "columns": [
+            "event_date"
+          ],
+          "isUnique": false
+        },
+        "idx_page_views_event_date_path": {
+          "name": "idx_page_views_event_date_path",
+          "columns": [
+            "event_date",
+            "path"
+          ],
+          "isUnique": false
+        },
+        "idx_page_views_event_date_source": {
+          "name": "idx_page_views_event_date_source",
+          "columns": [
+            "event_date",
+            "source_channel"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}

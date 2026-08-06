@@ -20,6 +20,26 @@ export const pageViews = sqliteTable(
   ],
 );
 
+export const interactionEvents = sqliteTable(
+  "interaction_events",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    eventDate: text("event_date").notNull(),
+    path: text("path").notNull(),
+    eventType: text("event_type").notNull().default("calculation_completed"),
+    eventLabel: text("event_label").notNull().default(""),
+    sourceHost: text("source_host").notNull().default(""),
+    visitorHash: text("visitor_hash").notNull(),
+    isInternal: integer("is_internal"),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    index("idx_interactions_event_date").on(table.eventDate),
+    index("idx_interactions_event_date_path").on(table.eventDate, table.path),
+    index("idx_interactions_event_type").on(table.eventDate, table.eventType),
+  ],
+);
+
 export const crawlerHits = sqliteTable(
   "crawler_hits",
   {

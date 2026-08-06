@@ -12,6 +12,7 @@ export function SiteHeader() {
           <Link href="/#all-tools">All tools</Link>
           <Link href="/guides">Guides</Link>
           <Link href="/resources">Resources</Link>
+          <Link href="/methodology">Method</Link>
           <Link className="nav-pill" href="/tools/dimensional-weight-calculator">Start calculating</Link>
         </nav>
       </div>
@@ -35,6 +36,8 @@ export function SiteFooter() {
           <Link href="/guides">Guides</Link>
           <Link href="/resources">Workbook &amp; resources</Link>
           <Link href="/about">About</Link>
+          <Link href="/methodology">Method &amp; sources</Link>
+          <Link href="/changelog">Version log</Link>
           <Link href="/privacy">Privacy</Link>
           <a href="https://github.com/Saigetsu233/freightkit-calculators" target="_blank" rel="noopener noreferrer">Open-source formulas</a>
           <Link href="/tools/cbm-calculator">CBM calculator</Link>
@@ -43,7 +46,7 @@ export function SiteFooter() {
         </nav>
       </div>
       <div className="shell footer-bottom">
-        <span>© {new Date().getFullYear()} FreightKit</span>
+        <span>© {new Date().getFullYear()} ShipMathLab · maintained by Saigetsu233</span>
         <span>Planning estimates only. Verify critical figures with your carrier or supplier.</span>
       </div>
     </footer>
