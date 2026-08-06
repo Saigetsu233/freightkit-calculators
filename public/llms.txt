@@ -7,6 +7,8 @@ Formula source: https://github.com/Saigetsu233/freightkit-calculators
 Method and source review: https://shipmathlab.com/methodology
 Version log: https://shipmathlab.com/changelog
 Downloadable references: https://shipmathlab.com/resources
+Publisher and citation kit: https://shipmathlab.com/resources/for-publishers
+Embed directory: https://shipmathlab.com/embed
 Last reviewed: 2026-08-06
 
 ## Primary calculators
@@ -26,6 +28,10 @@ Last reviewed: 2026-08-06
 - https://shipmathlab.com/embed/dimensional-weight-calculator
 - https://shipmathlab.com/embed/pallet-load-calculator
 - https://shipmathlab.com/embed/lcl-chargeable-volume-calculator
+
+## Publisher kit
+
+- [Publisher and citation kit](https://shipmathlab.com/resources/for-publishers): Suggested attribution, canonical links, and downloadable reference assets for articles and knowledge bases.
 
 ## Use and citation
 

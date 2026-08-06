@@ -12,6 +12,7 @@ export function SiteHeader() {
           <Link href="/#all-tools">All tools</Link>
           <Link href="/guides">Guides</Link>
           <Link href="/resources">Resources</Link>
+          <Link href="/embed">Embed</Link>
           <Link href="/methodology">Method</Link>
           <Link className="nav-pill" href="/tools/dimensional-weight-calculator">Start calculating</Link>
         </nav>
@@ -35,6 +36,7 @@ export function SiteFooter() {
           <Link href="/#all-tools">All calculators</Link>
           <Link href="/guides">Guides</Link>
           <Link href="/resources">Workbook &amp; resources</Link>
+          <Link href="/resources/for-publishers">Publisher &amp; embed kit</Link>
           <Link href="/about">About</Link>
           <Link href="/methodology">Method &amp; sources</Link>
           <Link href="/changelog">Version log</Link>

@@ -12,6 +12,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...guides.map((guide) => ({ url: `${base}/guides/${guide.slug}`, changeFrequency: "monthly" as const, priority: .7 })),
     ...topics.map((topic) => ({ url: `${base}/topics/${topic.slug}`, changeFrequency: "monthly" as const, priority: .9 })),
     { url: `${base}/resources`, changeFrequency: "monthly", priority: .7 },
+    { url: `${base}/embed`, changeFrequency: "monthly", priority: .7 },
+    { url: `${base}/resources/for-publishers`, changeFrequency: "monthly", priority: .7 },
     { url: `${base}/about`, changeFrequency: "yearly", priority: .3 },
     { url: `${base}/methodology`, changeFrequency: "monthly", priority: .6 },
     { url: `${base}/changelog`, changeFrequency: "monthly", priority: .5 },
