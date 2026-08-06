@@ -9,6 +9,8 @@ Version log: https://shipmathlab.com/changelog
 Downloadable references: https://shipmathlab.com/resources
 Publisher and citation kit: https://shipmathlab.com/resources/for-publishers
 Embed directory: https://shipmathlab.com/embed
+Freight decision planner: https://shipmathlab.com/freight-planner
+Question-based answers: https://shipmathlab.com/questions
 Last reviewed: 2026-08-06
 
 ## Primary calculators
@@ -22,6 +24,14 @@ Last reviewed: 2026-08-06
 - [Dimensional weight](https://shipmathlab.com/topics/dimensional-weight): Formula, carrier divisors, chargeable weight, rounding, worked examples, and packaging audits.
 - [Pallet loading](https://shipmathlab.com/topics/pallet-loading): Pallet sizes, carton orientation, full layers, height, weight, strength, and stability limits.
 - [LCL weight or measure](https://shipmathlab.com/topics/lcl-weight-measure): CBM, metric tonnes, revenue tons, minimums, local fees, and multi-line examples.
+
+## Question-based entry points
+
+- [How do I calculate dimensional weight for FedEx, UPS, DHL, or USPS?](https://shipmathlab.com/questions/how-to-calculate-dimensional-weight)
+- [How many boxes fit on a pallet?](https://shipmathlab.com/questions/how-many-boxes-fit-on-a-pallet)
+- [How is LCL chargeable volume calculated?](https://shipmathlab.com/questions/how-is-lcl-chargeable-volume-calculated)
+- [Should I use actual or dimensional weight for shipping?](https://shipmathlab.com/questions/actual-or-dimensional-weight-for-shipping)
+- [How do I compare LCL and pallet shipping cost?](https://shipmathlab.com/questions/compare-lcl-and-pallet-shipping-cost)
 
 ## Embeddable calculators
 

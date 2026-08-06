@@ -24,6 +24,7 @@ export default function Home() {
             <Link className="button button-primary" href="/tools/dimensional-weight-calculator">
               Calculate dimensional weight <span aria-hidden="true">↗</span>
             </Link>
+            <Link className="text-link" href="/freight-planner">Open the freight decision planner →</Link>
             <a className="text-link" href="#all-tools">Browse all 20 tools</a>
           </div>
           <div className="trust-row" aria-label="Product qualities">

@@ -10,7 +10,11 @@ export function SiteHeader() {
         </Link>
         <nav className="site-nav" aria-label="Primary navigation">
           <Link href="/#all-tools">All tools</Link>
+          <Link href="/freight-planner">Freight planner</Link>
+          <Link href="/questions">Questions</Link>
           <Link href="/guides">Guides</Link>
+          <Link href="/freight-planner">Freight decision planner</Link>
+          <Link href="/questions">Freight questions</Link>
           <Link href="/resources">Resources</Link>
           <Link href="/embed">Embed</Link>
           <Link href="/methodology">Method</Link>
