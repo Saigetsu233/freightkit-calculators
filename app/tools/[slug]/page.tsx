@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: tool.title,
     description: tool.intro,
     alternates: { canonical: `/tools/${tool.slug}` },
-    openGraph: { title: `${tool.title} | FreightKit`, description: tool.intro },
+    openGraph: { title: `${tool.title} | ShipMathLab`, description: tool.intro, url: `/tools/${tool.slug}` },
   };
 }
 
@@ -60,7 +60,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
     operatingSystem: "Any",
     browserRequirements: "Requires JavaScript",
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-    featureList: [tool.formula, "Live calculation", "Copyable result", ...(embeddable ? ["Embeddable calculator"] : [])],
+    featureList: [tool.formula, "Live calculation", "Copyable result", ...(tool.workedExample ? ["Worked example and common-error checks"] : []), ...(embeddable ? ["Embeddable calculator"] : [])],
   };
 
   return (
@@ -83,6 +83,10 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
         <div><p className="eyebrow">Method &amp; limits</p><h2>How this estimate works</h2></div>
         <div className="method-copy"><p>FreightKit keeps the working visible so you can sense-check the answer before using it in a decision.</p><div className="formula-box">{tool.formula}</div><p>{tool.assumption}</p>{topic ? <Link className="topic-inline-link" href={`/topics/${topic.slug}`}>Explore the complete {topic.shortTitle} reference ↗</Link> : null}{tool.sources?.length ? <div className="tool-sources"><strong>Primary references</strong>{tool.sources.map((source) => <a href={source.url} key={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a>)}</div> : null}<p className="fine-print">This calculator is a planning aid, not a carrier quotation, engineering assessment, or professional advice. Verify critical figures against current supplier and carrier documentation.</p></div>
       </section>
+      {tool.workedExample ? <section className="shell evidence-grid" aria-label="Worked example and common mistakes">
+        <article className="evidence-card example-card"><p className="eyebrow">Worked example</p><h2>{tool.workedExample.title}</h2><ol>{tool.workedExample.steps.map((step) => <li key={step}>{step}</li>)}</ol><p className="evidence-result"><strong>Result</strong>{tool.workedExample.result}</p></article>
+        <article className="evidence-card mistake-card"><p className="eyebrow">Avoid these errors</p><h2>Common mistakes that change the answer</h2><ul>{tool.commonMistakes?.map((mistake) => <li key={mistake}>{mistake}</li>)}</ul><p className="fine-print">A calculator can expose the arithmetic; the applicable carrier rate card, handling standard, or freight quotation still controls the real transaction.</p></article>
+      </section> : null}
       {taxRecommendation ? <section className="shell network-inline"><div><span>Related tax calculation · TaxMathKit</span><h2>{taxRecommendation.title}</h2><p>{taxRecommendation.description}</p></div><a className="text-link" href={taxRecommendation.href}>{taxRecommendation.label} ↗</a></section> : null}
       {embeddable ? <EmbedPanel slug={tool.slug} title={tool.title} /> : null}
       {guides.length ? <section className="shell tool-guides"><p className="eyebrow">Use the number well</p><div className="tool-guide-grid">{guides.map((guide)=><Link href={`/guides/${guide.slug}`} key={guide.slug}><span>{guide.readTime}</span><strong>{guide.title} ↗</strong><p>{guide.description}</p></Link>)}</div></section> : null}

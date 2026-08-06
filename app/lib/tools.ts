@@ -10,6 +10,12 @@ export type ToolDefinition = {
   assumption: string;
   reviewed?: string;
   sources?: Array<{ label: string; url: string }>;
+  workedExample?: {
+    title: string;
+    steps: string[];
+    result: string;
+  };
+  commonMistakes?: string[];
 };
 
 export const tools: ToolDefinition[] = [
@@ -29,6 +35,21 @@ export const tools: ToolDefinition[] = [
       { label: "UPS dimensional weight and rate-type divisors", url: "https://developer.ups.com/us/en/support/shipping-support/shipping-dimensions-weight" },
       { label: "DHL volumetric weight guidance", url: "https://www.dhl.com/discover/en-gb/ship-with-dhl/products-and-services/weight-and-dimensions" },
       { label: "USPS dimensional weight example", url: "https://pe.usps.com/QSG_Archive/NHTML/QSG_Archive_20250119/Q201e.htm" },
+    ],
+    workedExample: {
+      title: "50 × 40 × 30 cm parcel at a 5,000 divisor",
+      steps: [
+        "Volume: 50 × 40 × 30 = 60,000 cm³.",
+        "Dimensional weight: 60,000 ÷ 5,000 = 12 kg.",
+        "Compare with 7 kg actual weight, then apply the selected billing increment per parcel.",
+      ],
+      result: "The planning chargeable basis is 12 kg per parcel before any service-specific measurement rule or surcharge.",
+    },
+    commonMistakes: [
+      "Mixing centimetre/kilogram and inch/pound divisors.",
+      "Using product dimensions instead of the finished outside package.",
+      "Rounding only the shipment total when the carrier bills each parcel.",
+      "Treating a public preset as the rule in a negotiated contract.",
     ],
   },
   {
@@ -67,6 +88,21 @@ export const tools: ToolDefinition[] = [
     sources: [
       { label: "EPAL Euro pallet specifications", url: "https://www.epal-pallets.org/eu-en/load-carriers/epal-euro-pallet" },
       { label: "ISO 6780 pallet dimensions overview", url: "https://www.iso.org/standard/30524.html" },
+    ],
+    workedExample: {
+      title: "1,200 × 1,000 mm pallet with 400 × 300 × 250 mm cartons",
+      steps: [
+        "The best straight-row orientation fits 3 × 3 cartons, or 9 per layer.",
+        "A 165 cm total-height limit less a 15 cm pallet base leaves 150 cm: 6 full layers.",
+        "Geometry allows 54 cartons; a 1,000 kg cargo limit at 20 kg per carton allows only 50.",
+      ],
+      result: "The weight limit controls at 50 cartons, subject to pallet rating, compression and stability approval.",
+    },
+    commonMistakes: [
+      "Forgetting that a total-height limit includes the pallet base and load restraints.",
+      "Counting cartons from area percentages instead of whole rows.",
+      "Using pallet capacity as proof that the bottom cartons can carry the stack.",
+      "Optimising count without documenting orientation, wrap and overhang rules.",
     ],
   },
   {
@@ -171,6 +207,21 @@ export const tools: ToolDefinition[] = [
     sources: [
       { label: "Maersk LCL weight and measure terms", url: "https://terms.maersk.com/LCL" },
       { label: "Maersk shipping glossary — W/M", url: "https://www.maersk.com/de-de/support/glossaries/shipping-terms" },
+    ],
+    workedExample: {
+      title: "Ten crates at 100 × 80 × 80 cm and 420 kg each",
+      steps: [
+        "Volume: 1.00 × 0.80 × 0.80 × 10 = 6.4 CBM.",
+        "Gross weight: 420 × 10 = 4,200 kg, or 4.2 metric tonnes.",
+        "Compare 6.4 measure units with 4.2 weight units, then apply the quote minimum and fee structure.",
+      ],
+      result: "Volume controls at 6.4 W/M units in this common model; fixed origin, destination and document fees remain separate.",
+    },
+    commonMistakes: [
+      "Adding carton cube and palletised cube for the same cargo.",
+      "Comparing kilograms directly with CBM instead of converting to metric tonnes under the quoted rule.",
+      "Applying one minimum to the whole invoice when different fee lines have different minimums.",
+      "Ranking quotes by ocean rate while omitting destination and document charges.",
     ],
   },
   {

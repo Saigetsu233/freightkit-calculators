@@ -375,6 +375,64 @@ export const guides: Guide[] = [
       { label: "Maersk LCL local tariff example", url: "https://www.maersk.com/~/media_sc9/maersk/local-information/files/asia-pacific/korea/overview-useful-links/lcl-kr-local-tariff-for-export-import-updated-09-10-2024.pdf" },
     ],
   },
+  {
+    slug: "actual-weight-vs-dimensional-weight",
+    title: "Actual weight vs dimensional weight: which one controls the parcel charge?",
+    description: "Compare scale weight and package cube correctly, then identify the packaging change that can actually reduce billable weight.",
+    category: "Parcel",
+    readTime: "8 min",
+    relatedTool: "dimensional-weight-calculator",
+    takeaway: "Calculate both weights for each finished parcel, apply the service-specific rules, and use the larger chargeable result—not the lighter number you would prefer.",
+    sections: [
+      { heading: "Treat actual and dimensional weight as two competing measurements", paragraphs: ["Actual weight is the packed parcel on a calibrated scale. Dimensional weight converts the outside cube into a weight equivalent using the divisor for the carrier, service, rate type, units, and lane. The carrier commonly compares the two because a large light parcel consumes capacity differently from a compact dense parcel.", "Do the comparison per package unless the applicable contract explicitly uses a different shipment-level method. Record the measured dimensions, scale weight, divisor, dimension rounding, and billing increment so the calculation can be repeated."], bullets: ["Actual weight comes from the finished packed parcel.", "Dimensional weight comes from outside length × width × height ÷ divisor.", "Chargeable weight normally starts with the greater eligible result."] },
+      { heading: "Find the break-even package size", paragraphs: ["For a 7 kg product using a 5,000 cm/kg divisor, any unrounded package cube above 35,000 cm³ produces a dimensional result above 7 kg. A 50 × 35 × 20 cm carton is exactly 35,000 cm³; a small bulge or measurement rounding can move it over the break-even point.", "That threshold gives packaging teams a useful target. Reducing cube below it may switch the weight basis, while a smaller change that remains above it can still save chargeable-weight increments. Recalculate with the real billing rule before approving a new carton."] },
+      { heading: "Choose the intervention that matches the limiting weight", paragraphs: ["When dimensional weight controls, test carton height, product orientation, void space, mailer or carton selection, and pack consistency. When actual weight controls, a smaller carton may improve cube utilisation but will not reduce the weight basis unless it also removes material or product weight.", "Do not trade freight savings for damage, unsafe handling, slower packing, or a weak pallet pattern. Validate the packed sample and compare annual freight savings with packaging, labour, damage, and inventory costs."] },
+    ],
+    checklist: ["Finished outside dimensions", "Packed scale weight", "Carrier and service", "Correct units and divisor", "Measurement and billing rounding", "Break-even cube", "Pack-test result"],
+    sources: [
+      { label: "FedEx dimensional weight guidance", url: "https://www.fedex.com/en-us/shipping/packaging/what-is-dimensional-weight.html" },
+      { label: "UPS chargeable and volumetric weight guidance", url: "https://www.ups.com/us/en/supplychain/freight/chargeable-and-volumetric-weight-calculator" },
+      { label: "DHL volumetric-weight method", url: "https://dct.dhl.com/help" },
+    ],
+  },
+  {
+    slug: "pallet-loading-calculation-mistakes",
+    title: "Seven pallet-loading calculation mistakes that inflate carton count",
+    description: "Catch the geometry, height, weight, and operating-rule errors that turn a neat calculator result into an unusable load plan.",
+    category: "Warehouse",
+    readTime: "8 min",
+    relatedTool: "pallet-load-calculator",
+    takeaway: "A valid pallet count is the smallest approved limit after whole-carton geometry, total height, gross weight, pallet rating, carton strength, stability, and lane rules are all applied.",
+    sections: [
+      { heading: "Mistakes in the footprint calculation", paragraphs: ["The first error is using nominal product dimensions instead of finished carton dimensions. The second is multiplying pallet area by a utilisation percentage and rounding to a carton count; cartons must fit as whole rectangles in an actual pattern. The third is testing only one 90-degree orientation.", "A simple calculator can compare two straight-row orientations, but mixed patterns, protrusions, corner posts, label access, and no-overhang requirements can still reduce the operational count."], bullets: ["Measure sealed cartons at their largest points.", "Use floor division for whole rows.", "Draw or trial the pattern that the warehouse will repeat."] },
+      { heading: "Mistakes in height and weight", paragraphs: ["The fourth error is treating maximum cargo height as maximum total height. If the limit includes a 15 cm pallet base, cap, or clearance, subtract them before dividing by carton height. The fifth is comparing cargo weight with only one capacity number. Pallet rating, rack, forklift, vehicle, customer, and floor constraints are different limits.", "Use gross carton weight and include stabilisation materials when the margin is small. Round carton and layer counts down; a partial carton or fraction of a layer is not capacity."] },
+      { heading: "Mistakes in approval and handoff", paragraphs: ["The sixth error is assuming a dense pattern is stable. Pattern, centre of mass, friction, stretch wrap, straps, corner protection, compression strength, moisture, and route vibration require a physical operating standard. The seventh is publishing a number without the assumptions that produced it.", "Issue a one-page specification with pallet type, carton orientation, cartons per layer, layer count, total cartons, finished height, gross load weight, restraint method, revision date, and photo. The calculator result should be traceable to that document."] },
+    ],
+    checklist: ["Finished carton dimensions", "Both orientations", "No-overhang rule", "Pallet base and clearance", "Gross load weight", "Every capacity limit", "Physical trial and revision control"],
+    sources: [
+      { label: "EPAL Euro pallet specifications", url: "https://www.epal-pallets.org/eu-en/load-carriers/epal-euro-pallet" },
+      { label: "ISO 6780 principal pallet dimensions", url: "https://www.iso.org/standard/30524.html" },
+    ],
+  },
+  {
+    slug: "cbm-vs-weight-ton-vs-wm-lcl",
+    title: "CBM vs weight ton vs W/M for LCL: do not compare the wrong units",
+    description: "Separate physical volume, gross tonnes, chargeable W/M, and quoted rates so an LCL estimate survives invoice review.",
+    category: "Ocean freight",
+    readTime: "8 min",
+    relatedTool: "lcl-chargeable-volume-calculator",
+    takeaway: "CBM and gross metric tonnes describe the shipment; W/M is a quoted charging comparison that usually selects the larger numerical basis and may then apply minimums and rounding.",
+    sections: [
+      { heading: "Define each number before comparing it", paragraphs: ["CBM is outside volume in cubic metres. A metric tonne is 1,000 kilograms of gross shipment weight. Under a common LCL weight-or-measure model, one CBM is compared numerically with one metric tonne, and the larger value becomes the base W/M or revenue-ton quantity.", "Do not compare CBM directly with kilograms. A shipment of 2.4 CBM and 1,600 kg compares 2.4 with 1.6 metric tonnes, so measure controls in that model. The forwarder's quotation or tariff defines the actual equivalence, minimum, and rounding."] },
+      { heading: "Keep measurement and pricing on separate lines", paragraphs: ["First total every distinct handling unit: outside dimensions × quantity for CBM, and gross weight per piece × quantity for kilograms. Next calculate the raw W/M basis. Only then apply the minimum chargeable quantity, per-W/M ocean rate, per-W/M surcharges, and fixed fees.", "This sequence prevents three common errors: double-counting cartons already included in a pallet envelope, letting a one-W/M minimum overwrite unrelated fixed charges, and multiplying origin or document fees by W/M when they are quoted per shipment."], bullets: ["Use one row per carton, crate, or pallet type.", "State whether cargo is tendered loose or palletised.", "Label every price as per W/M, per shipment, per document, or actual."] },
+      { heading: "Compare quotes and invoices on the same scope", paragraphs: ["Align origin, destination, Incoterm, currency, tax treatment, validity, free time, and included local services before ranking quotes. A lower ocean rate can lose once CFS, documentation, delivery order, customs, storage, or inland transport is added.", "Retain the original cargo lines and the forwarder's remeasurement record. If the invoice changes, reconcile CBM, gross weight, minimums, and fee units independently instead of disputing only the final total."] },
+    ],
+    checklist: ["CBM by cargo line", "Gross kilograms and tonnes", "Quoted W/M equivalence", "Minimum by fee line", "Per-unit and fixed fees", "Currency and scope", "Remeasurement evidence"],
+    sources: [
+      { label: "Maersk LCL weight and measure terms", url: "https://terms.maersk.com/LCL" },
+      { label: "Maersk LCL CBM calculation support", url: "https://www.maersk.com/fr-fr/support/faqs/how-can-calculate-my-lcl-cbm-volumes" },
+    ],
+  },
 ];
 
 export function getGuide(slug: string) {

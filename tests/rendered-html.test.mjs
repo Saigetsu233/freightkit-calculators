@@ -49,7 +49,7 @@ test("server-renders the finished FreightKit homepage", async () => {
   assert.match(html, /FreightKit/);
   assert.match(html, /Packaging math/);
   assert.match(html, /Browse all 20 tools/);
-  assert.match(html, /Browse all [\s\S]{0,30}22[\s\S]{0,30} guides/);
+  assert.match(html, /Browse all [\s\S]{0,30}25[\s\S]{0,30} guides/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/);
   for (const [slug] of toolRoutes) assert.match(html, new RegExp(`/tools/${slug}`));
 });
@@ -80,7 +80,7 @@ test("guides and monetisation resources render", async () => {
   const guides = await render("/guides");
   assert.equal(guides.status, 200);
   const guideHtml = await guides.text();
-  assert.match(guideHtml, /22[\s\S]{0,30} practical workflows/);
+  assert.match(guideHtml, /25[\s\S]{0,30} practical workflows/);
   assert.match(guideHtml, /dimensional-weight-packaging-audit/);
 
   const article = await render("/guides/landed-cost-model-for-imports");
@@ -114,10 +114,13 @@ test("new search clusters render and link to their calculators", async () => {
   const clusterRoutes = [
     ["dimensional-weight-carrier-divisors", "dimensional-weight-calculator"],
     ["dimensional-weight-rounding-examples", "dimensional-weight-calculator"],
+    ["actual-weight-vs-dimensional-weight", "dimensional-weight-calculator"],
     ["standard-pallet-sizes-carton-fit", "pallet-load-calculator"],
     ["pallet-height-weight-stability-limits", "pallet-load-calculator"],
+    ["pallet-loading-calculation-mistakes", "pallet-load-calculator"],
     ["calculate-lcl-wm-multiple-cartons", "lcl-chargeable-volume-calculator"],
     ["lcl-minimum-charges-local-fees", "lcl-chargeable-volume-calculator"],
+    ["cbm-vs-weight-ton-vs-wm-lcl", "lcl-chargeable-volume-calculator"],
   ];
   for (const [guideSlug, toolSlug] of clusterRoutes) {
     const response = await render(`/guides/${guideSlug}`);

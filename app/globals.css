@@ -194,6 +194,13 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .method-copy { color: #4d5049; line-height: 1.75; }
 .method-copy p:first-child { margin-top: 0; }
 .formula-box { margin: 24px 0; padding: 20px; border-left: 5px solid var(--orange); background: var(--white); font: 750 .86rem/1.6 ui-monospace, monospace; color: var(--ink); overflow-wrap: anywhere; }
+.evidence-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; padding-bottom: 90px; }
+.evidence-card { padding: 30px; border: 1px solid var(--ink); background: var(--white); box-shadow: 5px 5px 0 rgba(21,23,19,.12); }
+.evidence-card h2 { max-width: 620px; margin: 9px 0 22px; font: 500 2rem/1.08 Georgia,serif; letter-spacing: -.035em; }
+.evidence-card ol, .evidence-card ul { display: grid; gap: 12px; margin: 0; padding-left: 22px; color: var(--muted); font-size: .88rem; line-height: 1.6; }
+.evidence-result { display: grid; gap: 6px; margin: 24px 0 0; padding: 18px; background: var(--acid); font-size: .86rem; line-height: 1.55; }
+.evidence-result strong { color: var(--orange-dark); font-size: .66rem; letter-spacing: .11em; text-transform: uppercase; }
+.mistake-card { background: #fff8ed; }
 .fine-print { font-size: .76rem; color: var(--muted); }
 .tool-product-cta { margin-block: 58px 0; padding: 34px; background: var(--blue); color: white; display: flex; align-items: center; justify-content: space-between; gap: 40px; border: 1px solid var(--ink); box-shadow: 8px 8px 0 var(--ink); }
 .tool-product-cta .eyebrow { color: var(--acid); }
@@ -349,7 +356,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .affiliate-note { max-width: 760px; margin-top: 28px; color: var(--muted); font-size: .75rem; line-height: 1.6; }
 
 @media (max-width: 900px) {
-  .hero, .tool-hero, .workflow-grid, .method-section, .home-product-grid, .product-grid, .embed-panel, .embed-calculator, .topic-hero, .topic-method { grid-template-columns: 1fr; }
+  .hero, .tool-hero, .workflow-grid, .method-section, .evidence-grid, .home-product-grid, .product-grid, .embed-panel, .embed-calculator, .topic-hero, .topic-method { grid-template-columns: 1fr; }
   .hero { gap: 48px; padding-top: 58px; }
   .tool-hero { gap: 32px; }
   .tool-meta { border-left: 0; padding-left: 0; }
