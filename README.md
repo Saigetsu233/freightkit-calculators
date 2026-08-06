@@ -34,6 +34,7 @@ console.log(result.totalChargeableWeight); // 280
 
 See [FORMULAS.md](FORMULAS.md) for equations, assumptions, worked examples, and primary references.
 For machine-readable discovery, [FORMULAS.json](FORMULAS.json) exposes the same three methods, canonical calculator URLs, input units, assumptions, and reference links without requiring JavaScript execution.
+The [priority guide index](GUIDES.md) connects each formula to four distinct operational explanations plus three downloadable reference assets.
 
 ## Stable citation links
 
@@ -65,6 +66,14 @@ Available embed paths:
 - `https://shipmathlab.com/embed/lcl-chargeable-volume-calculator`
 
 An all-in-one example is in [examples/embed.html](examples/embed.html).
+
+## Download and cite the reference tables
+
+- [Carrier DIM divisor reference](https://shipmathlab.com/downloads/dim-divisor-reference.csv)
+- [Euro, GMA, and industrial pallet dimensions](https://shipmathlab.com/downloads/pallet-dimensions-carton-fit.csv)
+- [LCL quote audit checklist and W/M example](https://shipmathlab.com/downloads/lcl-quote-audit-checklist.csv)
+
+Each file includes a review date, scope note, and source trail. The maintenance process and release record are public at [shipmathlab.com/methodology](https://shipmathlab.com/methodology) and [shipmathlab.com/changelog](https://shipmathlab.com/changelog).
 
 ## Test
 
