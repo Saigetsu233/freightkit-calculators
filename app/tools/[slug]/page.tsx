@@ -9,6 +9,7 @@ import { getGuidesForTool } from "../../lib/guides";
 import { getPartnerForTool } from "../../lib/monetization";
 import { getTool, tools } from "../../lib/tools";
 import { getTopicForTool } from "../../lib/topics";
+import { priorityToolContent } from "../../lib/priority-content";
 
 const taxRecommendations: Record<string, { title: string; description: string; href: string; label: string }> = {
   "ecommerce-margin-calculator": {
@@ -53,6 +54,8 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   if (!tool) notFound();
   const related = tools.filter((item) => item.slug !== tool.slug).sort((a,b)=>Number(b.category===tool.category)-Number(a.category===tool.category)).slice(0, 3);
   const guides = getGuidesForTool(tool.slug);
+  const priority = priorityToolContent[tool.slug];
+  const nextSteps = related.slice(0, 2).map((item) => ({ href: `/tools/${item.slug}`, title: item.title, description: item.description }));
   const partner = getPartnerForTool(tool.slug);
   const embeddable = ["dimensional-weight-calculator", "pallet-load-calculator", "lcl-chargeable-volume-calculator"].includes(tool.slug);
   const topic = getTopicForTool(tool.slug);
@@ -84,8 +87,12 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
           {tool.reviewed ? <div><span>Rules reviewed</span><strong>{tool.reviewed}</strong></div> : null}
         </div>
       </section>
-      <section className="calculator-band"><div className="shell calculator-shell"><Calculator slug={tool.slug} /></div></section>
+      <section id="calculator" className="calculator-band"><div className="shell calculator-shell">
+        {priority ? <div className="calculator-start"><div><p className="eyebrow">Prefilled worked example</p><strong>{tool.workedExample?.title ?? "Change any input to see the estimate update"}</strong><p>{priority.searchLead}</p><code className="calculator-formula">{tool.formula}</code></div><a className="button button-primary" href="#calculator">Run the example ↓</a></div> : null}
+        <Calculator slug={tool.slug} nextSteps={nextSteps} />
+      </div></section>
       <FormulaFlow slug={tool.slug} />
+      {priority ? <section className="shell tool-intent-grid" aria-label="When to use this calculator"><article><p className="eyebrow">Use this when</p><h2>Questions this estimate can answer</h2><ul>{priority.useWhen.map((item) => <li key={item}>{item}</li>)}</ul></article><article><p className="eyebrow">Not for</p><h2>Checks you still need to make</h2><ul>{priority.notFor.map((item) => <li key={item}>{item}</li>)}</ul></article></section> : null}
       <section className="shell tool-product-cta"><div><p className="eyebrow">Need the repeatable version?</p><h2>Carry this result into the $19 operations workbook.</h2><p>Batch calculations, quote comparisons, landed cost, pallet planning, and margin sheets stay connected in one editable Excel file.</p></div><Link className="button button-primary" href="/resources#spreadsheet-pack">Preview the workbook ↗</Link></section>
       <section className="shell method-section">
         <div><p className="eyebrow">Method &amp; limits</p><h2>How this estimate works</h2></div>

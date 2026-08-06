@@ -36,7 +36,7 @@ export default async function EmbeddedCalculatorPage({ params }: { params: Promi
         <Link href={`/tools/${slug}`} target="_blank">Open full guide ↗</Link>
       </header>
       <div className="embed-calculator"><Calculator slug={slug} /></div>
-      <footer className="embed-footer"><Link href="/" target="_blank">Powered by FreightKit · transparent shipping formulas</Link></footer>
+      <footer className="embed-footer"><Link href={`/tools/${slug}`} target="_blank">Open the full {tool.shortTitle} guide ↗</Link><Link href="/" target="_blank">Powered by FreightKit · transparent shipping formulas</Link></footer>
     </main>
   );
 }

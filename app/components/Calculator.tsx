@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DimensionalWeightPro, LclChargePro, PalletLoadPro } from "./FocusCalculators";
 import { trackAnalyticsEvent } from "./Analytics";
 
@@ -77,6 +77,13 @@ function ResultPanel({ label, primary, metrics, note }: { label: string; primary
       <div className="result-actions"><button type="button" className="copy-button" onClick={copyResult}>{copied ? "Copied to clipboard ✓" : "Copy result summary"}</button><button type="button" className="copy-button" onClick={() => window.print()}>Print result</button></div>
     </aside>
   );
+}
+
+type NextStep = { href: string; title: string; description: string };
+
+function CalculatorNextSteps({ steps }: { steps: NextStep[] }) {
+  if (!steps.length) return null;
+  return <section className="calculator-next-steps" aria-label="Related next steps"><span className="calculator-kicker">After this calculation</span><div>{steps.map((step) => <a href={step.href} key={step.href}><strong>{step.title}</strong><span>{step.description}</span><b>Continue →</b></a>)}</div></section>;
 }
 
 function Frame({ children }: { children: React.ReactNode }) {
@@ -186,10 +193,21 @@ function PackagingWaste() {
   return <><Frame><NumberField label="Material purchased" value={purchased} onChange={setPurchased} unit="units"/><NumberField label="Material in good output" value={good} onChange={setGood} unit="units"/><NumberField label="Recoverable scrap" value={recovered} onChange={setRecovered} unit="units"/><NumberField label="Material cost / unit" value={unitCost} onChange={setUnitCost} unit="$"/></Frame><ResultPanel label="Net packaging waste" primary={`${fmt(rate,1)}%`} metrics={[{label:"Net waste quantity",value:`${fmt(waste,1)} units`},{label:"Good-output yield",value:`${fmt(yieldRate,1)}%`},{label:"Waste cost",value:`$${money(waste*n(unitCost))}`},{label:"Recovered share",value:`${fmt(n(purchased)?n(recovered)/n(purchased)*100:0,1)}%`}]} note="Keep all three material entries in the same unit. Recoverable scrap is excluded from net waste here." /></>;
 }
 
-export function Calculator({ slug }: { slug: string }) {
+export function Calculator({ slug, nextSteps = [] }: { slug: string; nextSteps?: NextStep[] }) {
+  const [hasInteracted, setHasInteracted] = useState(false);
+  useEffect(() => {
+    const root = document.querySelector<HTMLElement>(`[data-calculator-root="${slug}"]`);
+    if (!root) return;
+    const markInteracted = () => setHasInteracted(true);
+    root.addEventListener("input", markInteracted);
+    root.addEventListener("change", markInteracted);
+    return () => { root.removeEventListener("input", markInteracted); root.removeEventListener("change", markInteracted); };
+  }, [slug]);
   const calculators: Record<string, React.ReactNode> = {
     "dimensional-weight-calculator": <DimensionalWeightPro />, "cbm-calculator": <CbmCalculator />, "carton-fit-calculator": <CartonFit />, "pallet-load-calculator": <PalletLoadPro />, "container-loading-calculator": <ContainerLoading />, "package-girth-calculator": <PackageGirth />, "shipping-unit-converter": <UnitConverter />, "corrugated-box-cost-calculator": <BoxCost />, "shipping-cost-estimator": <ShippingCost />, "ecommerce-margin-calculator": <MarginCalculator />,
     "freight-density-calculator": <FreightDensity />, "air-freight-chargeable-weight-calculator": <AirChargeableWeight />, "lcl-chargeable-volume-calculator": <LclChargePro />, "load-meter-calculator": <LoadMetres />, "landed-cost-calculator": <LandedCost />, "reorder-point-calculator": <ReorderPoint />, "eoq-calculator": <Eoq />, "warehouse-storage-cost-calculator": <StorageCost />, "pallet-stack-height-calculator": <PalletStackHeight />, "packaging-waste-calculator": <PackagingWaste />,
   };
-  return calculators[slug] ?? null;
+  const calculator = calculators[slug];
+  if (!calculator) return null;
+  return <div data-calculator-root={slug}>{calculator}{hasInteracted ? <CalculatorNextSteps steps={nextSteps} /> : null}</div>;
 }

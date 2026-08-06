@@ -65,6 +65,10 @@ function ProFrame({ title = "Your inputs", children }: { title?: string; childre
   return <div className="calc-card"><div className="calc-card-header"><h2>{title}</h2><span className="live-badge">Live result</span></div><div className="calc-form"><div className="field-grid">{children}</div></div></div>;
 }
 
+function OptionalFields({ title, children }: { title: string; children: React.ReactNode }) {
+  return <details className="advanced-fields"><summary>{title}<span>Optional</span></summary><div className="advanced-field-grid">{children}</div></details>;
+}
+
 function ProResult({ label, primary, metrics, note }: { label: string; primary: string; metrics: Metric[]; note: string }) {
   const [copied, setCopied] = useState(false);
   const summary = `${label}: ${primary}. ${metrics.map((metric) => `${metric.label}: ${metric.value}`).join(". ")}.`;
@@ -138,14 +142,16 @@ export function DimensionalWeightPro() {
       <ProNumberField label="Width" value={width} onChange={setWidth} unit={metric ? "cm" : "in"} />
       <ProNumberField label="Height" value={height} onChange={setHeight} unit={metric ? "cm" : "in"} />
       <ProNumberField label="Actual weight / parcel" value={actual} onChange={setActual} unit={unit} />
-      <ProNumberField label="Number of identical parcels" value={quantity} onChange={setQuantity} step="1" />
-      {isCustom ? <ProNumberField label="Custom DIM divisor" value={customDivisor} onChange={setCustomDivisor} unit={metric ? "cm³/kg" : "in³/lb"} /> : <div className="field"><label>DIM divisor</label><div className="readout-field">{formatNumber(divisor, 0)} {metric ? "cm³/kg" : "in³/lb"}</div></div>}
-      <ProSelectField label="Chargeable-weight rounding" value={rounding} onChange={setRounding} options={[
-        { value: "preset", label: `Preset (${preset.rounding ? `up to ${preset.rounding} ${unit}` : "no rounding"})` },
-        { value: "0", label: "No rounding" },
-        { value: "0.5", label: `Round up to 0.5 ${unit}` },
-        { value: "1", label: `Round up to 1 ${unit}` },
-      ]} />
+      <OptionalFields title="Add parcel count, divisor or rounding">
+        <ProNumberField label="Number of identical parcels" value={quantity} onChange={setQuantity} step="1" />
+        {isCustom ? <ProNumberField label="Custom DIM divisor" value={customDivisor} onChange={setCustomDivisor} unit={metric ? "cm³/kg" : "in³/lb"} /> : <div className="field"><label>DIM divisor</label><div className="readout-field">{formatNumber(divisor, 0)} {metric ? "cm³/kg" : "in³/lb"}</div></div>}
+        <ProSelectField label="Chargeable-weight rounding" value={rounding} onChange={setRounding} options={[
+          { value: "preset", label: `Preset (${preset.rounding ? `up to ${preset.rounding} ${unit}` : "no rounding"})` },
+          { value: "0", label: "No rounding" },
+          { value: "0.5", label: `Round up to 0.5 ${unit}` },
+          { value: "1", label: `Round up to 1 ${unit}` },
+        ]} />
+      </OptionalFields>
     </ProFrame>
     <ProResult label="Estimated chargeable weight" primary={`${formatNumber(total)} ${unit}`} metrics={[
       { label: "Dimensional / parcel", value: `${formatNumber(dimPer)} ${unit}` },
@@ -228,13 +234,15 @@ export function PalletLoadPro() {
       <ProSelectField label="Pallet preset" value={presetKey} onChange={changePreset} options={Object.entries(palletPresets).map(([value, item]) => ({ value, label: item.label }))} wide />
       <ProNumberField label="Pallet length" value={palletLength} onChange={(value) => { setPresetKey("custom"); setPalletLength(value); }} unit="cm" />
       <ProNumberField label="Pallet width" value={palletWidth} onChange={(value) => { setPresetKey("custom"); setPalletWidth(value); }} unit="cm" />
-      <ProNumberField label="Pallet base height" value={baseHeight} onChange={setBaseHeight} unit="cm" />
-      <ProNumberField label="Maximum total height" value={maxTotalHeight} onChange={setMaxTotalHeight} unit="cm" hint="Includes the pallet base." />
-      <ProNumberField label="Maximum cargo weight" value={maxWeight} onChange={setMaxWeight} unit="kg" />
       <ProNumberField label="Carton length" value={cartonLength} onChange={setCartonLength} unit="cm" />
       <ProNumberField label="Carton width" value={cartonWidth} onChange={setCartonWidth} unit="cm" />
       <ProNumberField label="Carton height" value={cartonHeight} onChange={setCartonHeight} unit="cm" />
-      <ProNumberField label="Gross carton weight" value={cartonWeight} onChange={setCartonWeight} unit="kg" />
+      <OptionalFields title="Add height, weight and pallet constraints">
+        <ProNumberField label="Pallet base height" value={baseHeight} onChange={setBaseHeight} unit="cm" />
+        <ProNumberField label="Maximum total height" value={maxTotalHeight} onChange={setMaxTotalHeight} unit="cm" hint="Includes the pallet base." />
+        <ProNumberField label="Maximum cargo weight" value={maxWeight} onChange={setMaxWeight} unit="kg" />
+        <ProNumberField label="Gross carton weight" value={cartonWeight} onChange={setCartonWeight} unit="kg" />
+      </OptionalFields>
       <div className="field-wide"><PalletPattern across={pattern.across} deep={pattern.deep} orientation={pattern.orientation} /></div>
     </ProFrame>
     <ProResult label="Estimated pallet capacity" primary={`${formatNumber(totalCartons, 0)} cartons`} metrics={[
@@ -302,10 +310,12 @@ export function LclChargePro() {
       </div>
       <ProNumberField label="Minimum chargeable W/M" value={minimumUnits} onChange={setMinimumUnits} unit="units" />
       <ProNumberField label="Ocean rate / W/M" value={rate} onChange={setRate} unit="$" />
-      <ProNumberField label="Other surcharge / W/M" value={otherPerWm} onChange={setOtherPerWm} unit="$" />
-      <ProNumberField label="Origin fixed charges" value={origin} onChange={setOrigin} unit="$" />
-      <ProNumberField label="Destination fixed charges" value={destination} onChange={setDestination} unit="$" />
-      <ProNumberField label="Documentation / shipment" value={documents} onChange={setDocuments} unit="$" />
+      <OptionalFields title="Add surcharges and local charges">
+        <ProNumberField label="Other surcharge / W/M" value={otherPerWm} onChange={setOtherPerWm} unit="$" />
+        <ProNumberField label="Origin fixed charges" value={origin} onChange={setOrigin} unit="$" />
+        <ProNumberField label="Destination fixed charges" value={destination} onChange={setDestination} unit="$" />
+        <ProNumberField label="Documentation / shipment" value={documents} onChange={setDocuments} unit="$" />
+      </OptionalFields>
     </ProFrame>
     <ProResult label="Estimated all-in LCL charges" primary={`$${formatMoney(total)}`} metrics={[
       { label: "Shipment volume", value: `${formatNumber(totals.cbm, 3)} CBM` },
