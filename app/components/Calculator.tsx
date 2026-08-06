@@ -19,6 +19,25 @@ function money(value: number) {
   return new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
 }
 
+function encodeShareState(values: Array<{ value: string; checked?: boolean }>) {
+  const bytes = new TextEncoder().encode(JSON.stringify(values));
+  let binary = "";
+  bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function decodeShareState(value: string): Array<{ value: string; checked?: boolean }> {
+  try {
+    const padded = value.replace(/-/g, "+").replace(/_/g, "/") + "=".repeat((4 - value.length % 4) % 4);
+    const binary = atob(padded);
+    const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+    const decoded = JSON.parse(new TextDecoder().decode(bytes));
+    return Array.isArray(decoded) ? decoded.filter((field): field is { value: string; checked?: boolean } => typeof field?.value === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
 function NumberField({ label, value, onChange, unit, step = "any", hint, wide = false }: {
   label: string; value: string; onChange: (value: string) => void; unit?: string; step?: string; hint?: string; wide?: boolean;
 }) {
@@ -66,6 +85,38 @@ function ResultPanel({ label, primary, metrics, note }: { label: string; primary
     }
   }
 
+  async function copyDecisionCard() {
+    const title = document.querySelector("h1")?.textContent?.trim() ?? label;
+    const card = [title, `${label}: ${primary}`, ...metrics.map((metric) => `${metric.label}: ${metric.value}`), `Source: ${window.location.origin}${window.location.pathname}`].join("\n");
+    try {
+      await navigator.clipboard.writeText(card);
+      trackAnalyticsEvent("decision_card_copy", window.location.pathname.replace(/^\/(tools|embed)\//, ""));
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
+  }
+
+  async function shareLink() {
+    const root = document.querySelector<HTMLElement>("[data-calculator-root]");
+    const values = Array.from(root?.querySelectorAll<HTMLInputElement | HTMLSelectElement>("input,select") ?? []).map((element) => ({
+      value: element.value,
+      ...(element instanceof HTMLInputElement && element.type === "checkbox" ? { checked: element.checked } : {}),
+    }));
+    const url = new URL(window.location.href);
+    url.search = "";
+    url.searchParams.set("share", encodeShareState(values));
+    try {
+      await navigator.clipboard.writeText(url.toString());
+      trackAnalyticsEvent("share_link_copy", window.location.pathname.replace(/^\/(tools|embed)\//, ""));
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
+  }
+
   return (
     <aside className="result-card" aria-live="polite">
       <p className="result-label">{label}</p>
@@ -74,7 +125,7 @@ function ResultPanel({ label, primary, metrics, note }: { label: string; primary
         {metrics.map((metric) => <div className="result-metric" key={metric.label}><span>{metric.label}</span><strong>{metric.value}</strong></div>)}
       </div>
       <p className="result-note">{note}</p>
-      <div className="result-actions"><button type="button" className="copy-button" onClick={copyResult}>{copied ? "Copied to clipboard ✓" : "Copy result summary"}</button><button type="button" className="copy-button" onClick={() => window.print()}>Print result</button></div>
+      <div className="result-actions"><button type="button" className="copy-button" onClick={copyResult}>{copied ? "Copied to clipboard ✓" : "Copy result summary"}</button><button type="button" className="copy-button" onClick={copyDecisionCard}>Copy decision card</button><button type="button" className="copy-button" onClick={shareLink}>Share this estimate</button><button type="button" className="copy-button" onClick={() => window.print()}>Print result</button></div>
     </aside>
   );
 }
@@ -198,6 +249,27 @@ export function Calculator({ slug, nextSteps = [] }: { slug: string; nextSteps?:
   useEffect(() => {
     const root = document.querySelector<HTMLElement>(`[data-calculator-root="${slug}"]`);
     if (!root) return;
+    const shared = new URLSearchParams(window.location.search).get("share");
+    if (shared) {
+      window.requestAnimationFrame(() => {
+        const fields = decodeShareState(shared);
+        const elements = Array.from(root.querySelectorAll<HTMLInputElement | HTMLSelectElement>("input,select"));
+        fields.forEach((field, index) => {
+          const element = elements[index];
+          if (!element) return;
+          if (element instanceof HTMLInputElement && element.type === "checkbox") {
+            const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "checked")?.set;
+            setter?.call(element, field.checked === true);
+            element.dispatchEvent(new Event("change", { bubbles: true }));
+            return;
+          }
+          const prototype = element instanceof HTMLSelectElement ? HTMLSelectElement.prototype : HTMLInputElement.prototype;
+          const setter = Object.getOwnPropertyDescriptor(prototype, "value")?.set;
+          setter?.call(element, field.value);
+          element.dispatchEvent(new Event(element instanceof HTMLSelectElement ? "change" : "input", { bubbles: true }));
+        });
+      });
+    }
     const markInteracted = () => setHasInteracted(true);
     root.addEventListener("input", markInteracted);
     root.addEventListener("change", markInteracted);
