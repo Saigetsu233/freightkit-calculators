@@ -66,6 +66,7 @@ Available embed paths:
 - `https://shipmathlab.com/embed/lcl-chargeable-volume-calculator`
 
 An all-in-one example is in [examples/embed.html](examples/embed.html).
+For citation wording, canonical links, and sharing guardrails, see [DISTRIBUTION.md](DISTRIBUTION.md).
 
 ## Download and cite the reference tables
 
