@@ -61,8 +61,8 @@ function ProSelectField({ label, value, onChange, options, wide = false }: {
   );
 }
 
-function ProFrame({ title = "Your inputs", children }: { title?: string; children: React.ReactNode }) {
-  return <div className="calc-card"><div className="calc-card-header"><h2>{title}</h2><span className="live-badge">Live result</span></div><div className="calc-form"><div className="field-grid">{children}</div></div></div>;
+function ProFrame({ title = "Tell us what you know", guidance, children }: { title?: string; guidance: string; children: React.ReactNode }) {
+  return <div className="calc-card"><div className="calc-card-header"><h2>{title}</h2><span className="live-badge">Live result</span></div><div className="guided-promise"><span>Answer ordinary shipping questions</span><strong>No freight expertise needed</strong><p>{guidance}</p></div><div className="calc-form"><div className="field-grid">{children}</div></div></div>;
 }
 
 function OptionalFields({ title, children }: { title: string; children: React.ReactNode }) {
@@ -98,17 +98,18 @@ function ProResult({ label, primary, metrics, note }: { label: string; primary: 
 }
 
 const dimPresets = {
-  "dhl-metric": { label: "DHL Express — metric ÷ 5,000", system: "metric", divisor: 5000, rounding: .5 },
-  "fedex-us": { label: "FedEx — US/international ÷ 139", system: "imperial", divisor: 139, rounding: 1 },
-  "ups-daily": { label: "UPS Daily Rates — ÷ 139", system: "imperial", divisor: 139, rounding: 1 },
-  "ups-retail": { label: "UPS Retail Rates — ÷ 166", system: "imperial", divisor: 166, rounding: 1 },
-  "usps": { label: "USPS — ÷ 166 (eligibility rules apply)", system: "imperial", divisor: 166, rounding: 1 },
-  "custom-metric": { label: "Custom metric rule", system: "metric", divisor: 5000, rounding: 0 },
-  "custom-imperial": { label: "Custom imperial rule", system: "imperial", divisor: 139, rounding: 0 },
+  "metric-planning": { label: "I’m not sure — metric planning estimate (÷ 5,000)", system: "metric", divisor: 5000, rounding: .5 },
+  "dhl-metric": { label: "DHL Express — metric example (÷ 5,000)", system: "metric", divisor: 5000, rounding: .5 },
+  "fedex-us": { label: "FedEx — US/international example (÷ 139)", system: "imperial", divisor: 139, rounding: 1 },
+  "ups-daily": { label: "UPS Daily Rates — example (÷ 139)", system: "imperial", divisor: 139, rounding: 1 },
+  "ups-retail": { label: "UPS Retail Rates — example (÷ 166)", system: "imperial", divisor: 166, rounding: 1 },
+  "usps": { label: "USPS — planning example (÷ 166)", system: "imperial", divisor: 166, rounding: 1 },
+  "custom-metric": { label: "I know my metric divisor", system: "metric", divisor: 5000, rounding: 0 },
+  "custom-imperial": { label: "I know my imperial divisor", system: "imperial", divisor: 139, rounding: 0 },
 } as const;
 
 export function DimensionalWeightPro() {
-  const [presetKey, setPresetKey] = useState<keyof typeof dimPresets>("dhl-metric");
+  const [presetKey, setPresetKey] = useState<keyof typeof dimPresets>("metric-planning");
   const [length, setLength] = useState("40");
   const [width, setWidth] = useState("30");
   const [height, setHeight] = useState("25");
@@ -136,12 +137,13 @@ export function DimensionalWeightPro() {
   }
 
   return <>
-    <ProFrame>
-      <ProSelectField label="Carrier / rate preset" value={presetKey} onChange={changePreset} options={Object.entries(dimPresets).map(([value, item]) => ({ value, label: item.label }))} wide />
-      <ProNumberField label="Length" value={length} onChange={setLength} unit={metric ? "cm" : "in"} />
-      <ProNumberField label="Width" value={width} onChange={setWidth} unit={metric ? "cm" : "in"} />
-      <ProNumberField label="Height" value={height} onChange={setHeight} unit={metric ? "cm" : "in"} />
-      <ProNumberField label="Actual weight / parcel" value={actual} onChange={setActual} unit={unit} />
+    <ProFrame guidance="Choose the closest shipping setup, then enter the sealed box size and the weight shown on a scale. We select the divisor, compare both weights and apply the example rounding rule.">
+      <ProSelectField label="Which shipping setup is closest?" value={presetKey} onChange={changePreset} options={Object.entries(dimPresets).map(([value, item]) => ({ value, label: item.label }))} wide />
+      <ProNumberField label="Packed parcel length" value={length} onChange={setLength} unit={metric ? "cm" : "in"} />
+      <ProNumberField label="Packed parcel width" value={width} onChange={setWidth} unit={metric ? "cm" : "in"} />
+      <ProNumberField label="Packed parcel height" value={height} onChange={setHeight} unit={metric ? "cm" : "in"} />
+      <ProNumberField label="Scale weight for one parcel" value={actual} onChange={setActual} unit={unit} />
+      <p className="quick-assumption field-wide"><strong>What happens next:</strong> we calculate the space-based weight and automatically use the larger of that or the scale weight.</p>
       <OptionalFields title="Add parcel count, divisor or rounding">
         <ProNumberField label="Number of identical parcels" value={quantity} onChange={setQuantity} step="1" />
         {isCustom ? <ProNumberField label="Custom DIM divisor" value={customDivisor} onChange={setCustomDivisor} unit={metric ? "cm³/kg" : "in³/lb"} /> : <div className="field"><label>DIM divisor</label><div className="readout-field">{formatNumber(divisor, 0)} {metric ? "cm³/kg" : "in³/lb"}</div></div>}
@@ -153,7 +155,7 @@ export function DimensionalWeightPro() {
         ]} />
       </OptionalFields>
     </ProFrame>
-    <ProResult label="Estimated chargeable weight" primary={`${formatNumber(total)} ${unit}`} metrics={[
+    <ProResult label="Likely billed weight" primary={`${formatNumber(total)} ${unit}`} metrics={[
       { label: "Dimensional / parcel", value: `${formatNumber(dimPer)} ${unit}` },
       { label: "Actual / parcel", value: `${formatNumber(numberValue(actual))} ${unit}` },
       { label: "Chargeable / parcel", value: `${formatNumber(chargeablePer)} ${unit}` },
@@ -230,18 +232,19 @@ export function PalletLoadPro() {
     : 0;
 
   return <>
-    <ProFrame>
-      <ProSelectField label="Pallet preset" value={presetKey} onChange={changePreset} options={Object.entries(palletPresets).map(([value, item]) => ({ value, label: item.label }))} wide />
-      <ProNumberField label="Pallet length" value={palletLength} onChange={(value) => { setPresetKey("custom"); setPalletLength(value); }} unit="cm" />
-      <ProNumberField label="Pallet width" value={palletWidth} onChange={(value) => { setPresetKey("custom"); setPalletWidth(value); }} unit="cm" />
-      <ProNumberField label="Carton length" value={cartonLength} onChange={setCartonLength} unit="cm" />
-      <ProNumberField label="Carton width" value={cartonWidth} onChange={setCartonWidth} unit="cm" />
-      <ProNumberField label="Carton height" value={cartonHeight} onChange={setCartonHeight} unit="cm" />
-      <OptionalFields title="Add height, weight and pallet constraints">
+    <ProFrame guidance="Pick a familiar pallet and enter the outside size of one sealed carton. The example already includes editable height and weight limits, so you can get a complete plan without knowing pallet formulas.">
+      <ProSelectField label="Which pallet are you using?" value={presetKey} onChange={changePreset} options={Object.entries(palletPresets).map(([value, item]) => ({ value, label: item.label }))} wide />
+      <ProNumberField label="Packed carton length" value={cartonLength} onChange={setCartonLength} unit="cm" />
+      <ProNumberField label="Packed carton width" value={cartonWidth} onChange={setCartonWidth} unit="cm" />
+      <ProNumberField label="Packed carton height" value={cartonHeight} onChange={setCartonHeight} unit="cm" />
+      <ProNumberField label="Weight of one packed carton" value={cartonWeight} onChange={setCartonWeight} unit="kg" />
+      <p className="quick-assumption field-wide"><strong>Planning limits in use:</strong> {formatNumber(numberValue(maxTotalHeight), 1)} cm total height and {formatNumber(numberValue(maxWeight), 0)} kg cargo. Change these only if your warehouse or carrier gave you different limits.</p>
+      <OptionalFields title="Change pallet size or transport limits">
+        <ProNumberField label="Pallet length" value={palletLength} onChange={(value) => { setPresetKey("custom"); setPalletLength(value); }} unit="cm" />
+        <ProNumberField label="Pallet width" value={palletWidth} onChange={(value) => { setPresetKey("custom"); setPalletWidth(value); }} unit="cm" />
         <ProNumberField label="Pallet base height" value={baseHeight} onChange={setBaseHeight} unit="cm" />
         <ProNumberField label="Maximum total height" value={maxTotalHeight} onChange={setMaxTotalHeight} unit="cm" hint="Includes the pallet base." />
         <ProNumberField label="Maximum cargo weight" value={maxWeight} onChange={setMaxWeight} unit="kg" />
-        <ProNumberField label="Gross carton weight" value={cartonWeight} onChange={setCartonWeight} unit="kg" />
       </OptionalFields>
       <div className="field-wide"><PalletPattern across={pattern.across} deep={pattern.deep} orientation={pattern.orientation} /></div>
     </ProFrame>
@@ -260,13 +263,13 @@ type CargoLine = { id: number; description: string; length: string; width: strin
 
 export function LclChargePro() {
   const [lines, setLines] = useState<CargoLine[]>([
-    { id: 1, description: "Cartons", length: "100", width: "80", height: "80", quantity: "10", weightEach: "420" },
+    { id: 1, description: "Cartons", length: "100", width: "80", height: "80", quantity: "10", weightEach: "42" },
   ]);
   const [minimumUnits, setMinimumUnits] = useState("1");
-  const [rate, setRate] = useState("58");
-  const [origin, setOrigin] = useState("145");
-  const [destination, setDestination] = useState("260");
-  const [documents, setDocuments] = useState("65");
+  const [rate, setRate] = useState("0");
+  const [origin, setOrigin] = useState("0");
+  const [destination, setDestination] = useState("0");
+  const [documents, setDocuments] = useState("0");
   const [otherPerWm, setOtherPerWm] = useState("0");
 
   function updateLine(id: number, field: keyof CargoLine, value: string) {
@@ -292,38 +295,40 @@ export function LclChargePro() {
   const wmSurcharges = chargeableUnits * numberValue(otherPerWm);
   const fixedFees = numberValue(origin) + numberValue(destination) + numberValue(documents);
   const total = ocean + wmSurcharges + fixedFees;
+  const hasPricing = variableRate > 0 || fixedFees > 0;
 
   return <>
-      <ProFrame title="Your inputs · cargo lines & quote">
+      <ProFrame guidance="Enter the outside size, number and packed weight of each cargo type. We convert the shipment to CBM and tonnes, compare them and calculate W/M automatically. Quote prices are optional." title="Tell us what you know · cargo">
       <div className="cargo-lines field-wide">
-        <div className="cargo-line cargo-line-head" aria-hidden="true"><span>Description</span><span>L × W × H (cm)</span><span>Pieces</span><span>kg / piece</span><span /></div>
+        <div className="cargo-line cargo-line-head" aria-hidden="true"><span>Cargo type</span><span>Outside size (cm)</span><span>Pieces</span><span>Packed kg each</span><span /></div>
         {lines.map((line) => <div className="cargo-line" key={line.id}>
-          <label><span>Description</span><input value={line.description} onChange={(event) => updateLine(line.id, "description", event.target.value)} /></label>
+          <label><span>Cargo type</span><input value={line.description} onChange={(event) => updateLine(line.id, "description", event.target.value)} /></label>
           <div className="cargo-dimensions">
             {(["length", "width", "height"] as const).map((field) => <label key={field}><span>{field}</span><input type="number" min="0" inputMode="decimal" value={line[field]} onChange={(event) => updateLine(line.id, field, event.target.value)} /></label>)}
           </div>
           <label><span>Pieces</span><input type="number" min="0" step="1" inputMode="numeric" value={line.quantity} onChange={(event) => updateLine(line.id, "quantity", event.target.value)} /></label>
-          <label><span>kg / piece</span><input type="number" min="0" inputMode="decimal" value={line.weightEach} onChange={(event) => updateLine(line.id, "weightEach", event.target.value)} /></label>
+          <label><span>Packed kg each</span><input type="number" min="0" inputMode="decimal" value={line.weightEach} onChange={(event) => updateLine(line.id, "weightEach", event.target.value)} /></label>
           <button type="button" className="line-remove" onClick={() => setLines((current) => current.filter((item) => item.id !== line.id))} disabled={lines.length === 1} aria-label={`Remove ${line.description}`}>×</button>
         </div>)}
         <button type="button" className="add-line" onClick={addLine}>+ Add another cargo line</button>
       </div>
-      <ProNumberField label="Minimum chargeable W/M" value={minimumUnits} onChange={setMinimumUnits} unit="units" />
-      <ProNumberField label="Ocean rate / W/M" value={rate} onChange={setRate} unit="$" />
-      <OptionalFields title="Add surcharges and local charges">
+      <p className="quick-assumption field-wide"><strong>Planning rule in use:</strong> the larger of total CBM or metric tonnes, with a 1 W/M minimum. Open the quote section only if you have prices from a forwarder.</p>
+      <OptionalFields title="Add quote pricing or change the minimum">
+        <ProNumberField label="Minimum chargeable W/M" value={minimumUnits} onChange={setMinimumUnits} unit="units" />
+        <ProNumberField label="Ocean rate / W/M" value={rate} onChange={setRate} unit="$" />
         <ProNumberField label="Other surcharge / W/M" value={otherPerWm} onChange={setOtherPerWm} unit="$" />
         <ProNumberField label="Origin fixed charges" value={origin} onChange={setOrigin} unit="$" />
         <ProNumberField label="Destination fixed charges" value={destination} onChange={setDestination} unit="$" />
         <ProNumberField label="Documentation / shipment" value={documents} onChange={setDocuments} unit="$" />
       </OptionalFields>
     </ProFrame>
-    <ProResult label="Estimated all-in LCL charges" primary={`$${formatMoney(total)}`} metrics={[
+    <ProResult label="Estimated chargeable LCL quantity" primary={`${formatNumber(chargeableUnits, 3)} W/M`} metrics={[
       { label: "Shipment volume", value: `${formatNumber(totals.cbm, 3)} CBM` },
       { label: "Gross weight", value: `${formatNumber(totals.kg, 1)} kg` },
-      { label: "Chargeable W/M", value: `${formatNumber(chargeableUnits, 3)} units` },
       { label: "Charging basis", value: numberValue(minimumUnits) > rawUnits ? "Minimum" : totals.cbm >= tonnes ? "Volume" : "Weight" },
-      { label: "Variable charges", value: `$${formatMoney(chargeableUnits * variableRate)}` },
-      { label: "Fixed charges", value: `$${formatMoney(fixedFees)}` },
-    ]} note="All monetary inputs must use one currency. Your forwarder’s tariff controls minimums, rounding, density rules, and which local charges apply." />
+      { label: "Minimum used", value: `${formatNumber(minimumUnits, 3)} W/M` },
+      { label: "All-in quote estimate", value: hasPricing ? `$${formatMoney(total)}` : "Add quote prices if needed" },
+      { label: "Pieces entered", value: formatNumber(totals.pieces, 0) },
+    ]} note="This gives you the physical W/M basis without requiring a freight quote. Your forwarder’s tariff still controls minimums, rounding, density rules and local charges." />
   </>;
 }

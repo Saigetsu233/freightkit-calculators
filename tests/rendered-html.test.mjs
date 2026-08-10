@@ -14,7 +14,7 @@ const toolRoutes = [
   ["ecommerce-margin-calculator", "Ecommerce Margin Calculator", "$24.53"],
   ["freight-density-calculator", "Freight Density Calculator", "234.8 kg/m³"],
   ["air-freight-chargeable-weight-calculator", "Air Freight Chargeable Weight Calculator", "160 kg"],
-  ["lcl-chargeable-volume-calculator", "LCL Chargeable Volume Calculator", "$841.20"],
+  ["lcl-chargeable-volume-calculator", "LCL Chargeable Volume Calculator", "6.4 W/M"],
   ["load-meter-calculator", "Load Meter Calculator", "4 LDM"],
   ["landed-cost-calculator", "Landed Cost Calculator", "$13,191.36"],
   ["reorder-point-calculator", "Reorder Point Calculator", "498 units"],
@@ -60,12 +60,30 @@ test("all twenty calculator routes render their working interface", async () => 
     assert.equal(response.status, 200, slug);
     const html = await response.text();
     assert.match(html, new RegExp(escapeRegExp(title)), slug);
-    assert.match(html, /Your inputs/, slug);
+    assert.match(html, /Tell us what you know/, slug);
+    assert.match(html, /No freight expertise needed/, slug);
     assert.match(html, /Live result/, slug);
     assert.match(html, new RegExp(`result-primary[^>]*>${escapeRegExp(expectedResult)}`), `${slug} default result`);
     assert.match(html, /How this estimate works/, slug);
     assert.match(html, /Copy result summary/, slug);
   }
+});
+
+test("priority calculators start from facts a non-specialist already knows", async () => {
+  const dimensional = await render("/tools/dimensional-weight-calculator");
+  const dimensionalHtml = await dimensional.text();
+  assert.match(dimensionalHtml, /I’m not sure — metric planning estimate/);
+  assert.match(dimensionalHtml, /Scale weight for one parcel/);
+
+  const pallet = await render("/tools/pallet-load-calculator");
+  const palletHtml = await pallet.text();
+  assert.match(palletHtml, /Which pallet are you using/);
+  assert.match(palletHtml, /Planning limits in use/);
+
+  const lcl = await render("/tools/lcl-chargeable-volume-calculator");
+  const lclHtml = await lcl.text();
+  assert.match(lclHtml, /No W\/M knowledge or freight quote required/);
+  assert.match(lclHtml, /Add quote prices if needed/);
 });
 
 test("supporting trust pages render", async () => {

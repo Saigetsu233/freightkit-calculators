@@ -87,9 +87,9 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
           {tool.reviewed ? <div><span>Rules reviewed</span><strong>{tool.reviewed}</strong></div> : null}
         </div>
       </section>
-      <section id="calculator" className="calculator-band"><div className="shell calculator-shell">
+      <section id="calculator" className="calculator-band"><div className="shell">
         {priority ? <div className="calculator-start"><div><p className="eyebrow">Prefilled worked example</p><strong>{tool.workedExample?.title ?? "Change any input to see the estimate update"}</strong><p>{priority.searchLead}</p><code className="calculator-formula">{tool.formula}</code></div><a className="button button-primary" href="#calculator">Run the example ↓</a></div> : null}
-        <Calculator slug={tool.slug} nextSteps={nextSteps} />
+        <div className="calculator-shell"><Calculator slug={tool.slug} nextSteps={nextSteps} /></div>
       </div></section>
       <FormulaFlow slug={tool.slug} />
       {priority ? <section className="shell tool-intent-grid" aria-label="When to use this calculator"><article><p className="eyebrow">Use this when</p><h2>Questions this estimate can answer</h2><ul>{priority.useWhen.map((item) => <li key={item}>{item}</li>)}</ul></article><article><p className="eyebrow">Not for</p><h2>Checks you still need to make</h2><ul>{priority.notFor.map((item) => <li key={item}>{item}</li>)}</ul></article></section> : null}

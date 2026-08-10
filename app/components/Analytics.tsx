@@ -22,7 +22,7 @@ function send(payload: Record<string, unknown>) {
   void fetch("/api/analytics", { method: "POST", headers: { "content-type": "application/json" }, body, keepalive: true });
 }
 
-export function trackAnalyticsEvent(eventType: "tool_open" | "calculation_completed" | "copy_result" | "guide_to_tool" | "embed_view" | "decision_card_copy" | "share_link_copy", eventLabel = "", sourceHost = "") {
+export function trackAnalyticsEvent(eventType: "tool_open" | "calculator_visible" | "input_started" | "calculation_completed" | "copy_result" | "guide_to_tool" | "embed_view" | "decision_card_copy" | "share_link_copy", eventLabel = "", sourceHost = "") {
   if (typeof window === "undefined" || navigator.doNotTrack === "1") return;
   send({ path: window.location.pathname, isInternal: isInternalBrowser(), eventType, eventLabel, sourceHost });
 }

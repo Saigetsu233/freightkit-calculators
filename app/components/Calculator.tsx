@@ -138,7 +138,7 @@ function CalculatorNextSteps({ steps }: { steps: NextStep[] }) {
 }
 
 function Frame({ children }: { children: React.ReactNode }) {
-  return <div className="calc-card"><div className="calc-card-header"><h2>Your inputs</h2><span className="live-badge">Live result</span></div><div className="calc-form"><div className="field-grid">{children}</div></div></div>;
+  return <div className="calc-card"><div className="calc-card-header"><h2>Tell us what you know</h2><span className="live-badge">Live result</span></div><div className="guided-promise"><span>Answer ordinary shipping questions</span><strong>No freight expertise needed</strong><p>Use measurements, quantities or costs you already have. The worked example is ready to use, and ShipMathLab handles the formula and unit conversion while you edit.</p></div><div className="calc-form"><div className="field-grid">{children}</div></div></div>;
 }
 
 function CbmCalculator() {
@@ -249,6 +249,7 @@ export function Calculator({ slug, nextSteps = [] }: { slug: string; nextSteps?:
   useEffect(() => {
     const root = document.querySelector<HTMLElement>(`[data-calculator-root="${slug}"]`);
     if (!root) return;
+    trackAnalyticsEvent("calculator_visible", slug);
     const shared = new URLSearchParams(window.location.search).get("share");
     if (shared) {
       window.requestAnimationFrame(() => {
@@ -270,7 +271,14 @@ export function Calculator({ slug, nextSteps = [] }: { slug: string; nextSteps?:
         });
       });
     }
-    const markInteracted = () => setHasInteracted(true);
+    let sentInputStarted = false;
+    const markInteracted = () => {
+      setHasInteracted(true);
+      if (!sentInputStarted) {
+        sentInputStarted = true;
+        trackAnalyticsEvent("input_started", slug);
+      }
+    };
     root.addEventListener("input", markInteracted);
     root.addEventListener("change", markInteracted);
     return () => { root.removeEventListener("input", markInteracted); root.removeEventListener("change", markInteracted); };
