@@ -12,12 +12,12 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(base),
     title: {
-      default: "FreightKit — Free Packaging & Freight Calculators",
-      template: "%s | FreightKit",
+      default: "ShipMathLab — Free Freight, CBM & Pallet Calculators",
+      template: "%s | ShipMathLab",
     },
     description:
-      "Twenty free packaging, freight, warehouse, inventory, landed-cost, and ecommerce margin calculators.",
-    applicationName: "FreightKit",
+      "Twenty free freight, CBM, dimensional-weight, pallet-loading, landed-cost, warehouse, and shipping calculators with visible formulas.",
+    applicationName: "ShipMathLab",
     keywords: [
       "dimensional weight calculator",
       "CBM calculator",
@@ -33,25 +33,46 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     openGraph: {
       type: "website",
-      siteName: "FreightKit",
-      title: "FreightKit — Packaging math, without the spreadsheet.",
+      siteName: "ShipMathLab",
+      title: "ShipMathLab — Freight and packaging math, without the spreadsheet.",
       description: "Twenty free calculators and practical guides for packaging, ecommerce, warehouse, and freight teams.",
       url: base,
-      images: [{ url: `${base}/og.png`, width: 1200, height: 630, alt: "FreightKit packaging calculators" }],
+      images: [{ url: `${base}/og-ranking-v2.png`, width: 1536, height: 1024, alt: "ShipMathLab freight math calculators for CBM, pallets, dimensional weight, and landed cost" }],
     },
     twitter: {
       card: "summary_large_image",
-      title: "FreightKit — Packaging math, without the spreadsheet.",
+      title: "ShipMathLab — Freight and packaging math, without the spreadsheet.",
       description: "Twenty free calculators and practical guides for packaging, ecommerce, warehouse, and freight teams.",
-      images: [`${base}/og.png`],
+      images: [`${base}/og-ranking-v2.png`],
     },
   };
 }
 
+const structuredData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "ShipMathLab",
+    url: "https://shipmathlab.com",
+    description: "Independent freight and packaging calculator website with transparent formulas and source trails.",
+    founder: { "@type": "Person", name: "Saigetsu233" },
+    sameAs: ["https://github.com/Saigetsu233/freightkit-calculators"],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "ShipMathLab",
+    alternateName: "FreightKit",
+    url: "https://shipmathlab.com",
+    description: "Free freight, CBM, dimensional-weight, pallet-loading, and landed-cost calculators.",
+    publisher: { "@type": "Organization", name: "ShipMathLab", url: "https://shipmathlab.com" },
+  },
+];
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}<Analytics /></body>
+      <body>{children}<Analytics /><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} /></body>
     </html>
   );
 }

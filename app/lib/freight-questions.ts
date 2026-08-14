@@ -60,6 +60,16 @@ export const freightQuestions: FreightQuestion[] = [
     steps: ["Use the real tender form: loose cartons, crates, or pallet envelopes.", "Calculate CBM and gross metric tonnes without double-counting.", "List every fee by unit: W/M, shipment, document, pallet, or actual cost.", "Compare all-in cost and transit or handling constraints, not just the base rate."],
     related: ["/topics/lcl-weight-measure", "/guides/lcl-minimum-charges-local-fees", "/guides/cbm-vs-weight-ton-vs-wm-lcl"],
   },
+  {
+    slug: "how-to-calculate-landed-cost-per-unit",
+    title: "How do I calculate landed cost per unit?",
+    description: "Combine supplier value, international freight, insurance, customs duty, import tax, clearance fees, and quantity into one comparable unit cost.",
+    answer: "Add goods, international freight, insurance, duty, import tax, brokerage, and other destination costs, then divide the all-in landed total by the number of usable units. Keep the customs-value and import-tax bases editable because they vary by destination and product.",
+    tool: "landed-cost-calculator",
+    toolLabel: "Landed Cost per Unit Calculator",
+    steps: ["Calculate commercial goods value from unit purchase cost and quantity.", "Add international freight and insurance to the relevant customs-value basis.", "Apply the verified product duty rate and destination import-tax method.", "Add brokerage, inspection, port, bank, and other fixed fees.", "Divide the landed total by usable units and compare suppliers on the same scope."],
+    related: ["/tools/landed-cost-calculator", "/tools/ecommerce-margin-calculator", "/resources"],
+  },
 ];
 
 export function getFreightQuestion(slug: string) {

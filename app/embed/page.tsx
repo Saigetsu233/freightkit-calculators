@@ -27,6 +27,18 @@ const calculators = [
     description: "Compare CBM with metric tonnes, apply W/M minimums, and estimate variable and fixed charges.",
     height: 860,
   },
+  {
+    slug: "cbm-calculator",
+    title: "CBM Calculator",
+    description: "Calculate cubic metres, cubic feet, litres, and volume per freight piece across common dimension units.",
+    height: 820,
+  },
+  {
+    slug: "landed-cost-calculator",
+    title: "Landed Cost Calculator",
+    description: "Combine goods, freight, insurance, duty, import tax, other fees, and quantity into an all-in unit cost.",
+    height: 860,
+  },
 ];
 
 export default function EmbedDirectoryPage() {

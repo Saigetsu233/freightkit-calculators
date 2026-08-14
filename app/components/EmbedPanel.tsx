@@ -21,7 +21,7 @@ export function EmbedPanel({ slug, title }: { slug: string; title: string }) {
       <div>
         <p className="eyebrow">Free to embed</p>
         <h2>Put this calculator on your site.</h2>
-        <p>Paste one iframe into a logistics article, supplier portal, or internal knowledge base. The calculator stays hosted and updated by FreightKit.</p>
+        <p>Paste one iframe into a logistics article, supplier portal, or internal knowledge base. The calculator stays hosted and updated by ShipMathLab.</p>
       </div>
       <div className="embed-code-block">
         <code>{code}</code>

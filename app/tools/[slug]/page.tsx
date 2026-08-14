@@ -10,6 +10,7 @@ import { getPartnerForTool } from "../../lib/monetization";
 import { getTool, tools } from "../../lib/tools";
 import { getTopicForTool } from "../../lib/topics";
 import { priorityToolContent } from "../../lib/priority-content";
+import { freightQuestions } from "../../lib/freight-questions";
 
 const taxRecommendations: Record<string, { title: string; description: string; href: string; label: string }> = {
   "ecommerce-margin-calculator": {
@@ -55,9 +56,10 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   const related = tools.filter((item) => item.slug !== tool.slug).sort((a,b)=>Number(b.category===tool.category)-Number(a.category===tool.category)).slice(0, 3);
   const guides = getGuidesForTool(tool.slug);
   const priority = priorityToolContent[tool.slug];
+  const toolQuestions = freightQuestions.filter((question) => question.tool === tool.slug).slice(0, 3);
   const nextSteps = related.slice(0, 2).map((item) => ({ href: `/tools/${item.slug}`, title: item.title, description: item.description }));
   const partner = getPartnerForTool(tool.slug);
-  const embeddable = ["dimensional-weight-calculator", "pallet-load-calculator", "lcl-chargeable-volume-calculator"].includes(tool.slug);
+  const embeddable = ["dimensional-weight-calculator", "pallet-load-calculator", "lcl-chargeable-volume-calculator", "cbm-calculator", "landed-cost-calculator"].includes(tool.slug);
   const topic = getTopicForTool(tool.slug);
   const taxRecommendation = taxRecommendations[tool.slug];
   const structuredData = {
@@ -93,10 +95,11 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
       </div></section>
       <FormulaFlow slug={tool.slug} />
       {priority ? <section className="shell tool-intent-grid" aria-label="When to use this calculator"><article><p className="eyebrow">Use this when</p><h2>Questions this estimate can answer</h2><ul>{priority.useWhen.map((item) => <li key={item}>{item}</li>)}</ul></article><article><p className="eyebrow">Not for</p><h2>Checks you still need to make</h2><ul>{priority.notFor.map((item) => <li key={item}>{item}</li>)}</ul></article></section> : null}
+      {toolQuestions.length ? <section className="shell tool-guides"><p className="eyebrow">Start with your freight question</p><div className="tool-guide-grid">{toolQuestions.map((question) => <Link href={`/questions/${question.slug}`} key={question.slug}><span>{question.toolLabel}</span><strong>{question.title} ↗</strong><p>{question.description}</p></Link>)}</div></section> : null}
       <section className="shell tool-product-cta"><div><p className="eyebrow">Need the repeatable version?</p><h2>Carry this result into the $19 operations workbook.</h2><p>Batch calculations, quote comparisons, landed cost, pallet planning, and margin sheets stay connected in one editable Excel file.</p></div><Link className="button button-primary" href="/resources#spreadsheet-pack">Preview the workbook ↗</Link></section>
       <section className="shell method-section">
         <div><p className="eyebrow">Method &amp; limits</p><h2>How this estimate works</h2></div>
-        <div className="method-copy"><p>FreightKit keeps the working visible so you can sense-check the answer before using it in a decision.</p><div className="formula-box">{tool.formula}</div><p>{tool.assumption}</p>{topic ? <Link className="topic-inline-link" href={`/topics/${topic.slug}`}>Explore the complete {topic.shortTitle} reference ↗</Link> : null}{tool.sources?.length ? <div className="tool-sources"><strong>Primary references</strong>{tool.sources.map((source) => <a href={source.url} key={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a>)}</div> : null}<p className="fine-print">This calculator is a planning aid, not a carrier quotation, engineering assessment, or professional advice. Verify critical figures against current supplier and carrier documentation.</p></div>
+        <div className="method-copy"><p>ShipMathLab keeps the working visible so you can sense-check the answer before using it in a decision.</p><div className="formula-box">{tool.formula}</div><p>{tool.assumption}</p>{topic ? <Link className="topic-inline-link" href={`/topics/${topic.slug}`}>Explore the complete {topic.shortTitle} reference ↗</Link> : null}{tool.sources?.length ? <div className="tool-sources"><strong>Primary references</strong>{tool.sources.map((source) => <a href={source.url} key={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a>)}</div> : null}<p className="fine-print">This calculator is a planning aid, not a carrier quotation, engineering assessment, or professional advice. Verify critical figures against current supplier and carrier documentation.</p></div>
       </section>
       {tool.workedExample ? <section className="shell evidence-grid" aria-label="Worked example and common mistakes">
         <article className="evidence-card example-card"><p className="eyebrow">Worked example</p><h2>{tool.workedExample.title}</h2><ol>{tool.workedExample.steps.map((step) => <li key={step}>{step}</li>)}</ol><p className="evidence-result"><strong>Result</strong>{tool.workedExample.result}</p></article>

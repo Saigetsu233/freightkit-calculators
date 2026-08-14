@@ -7,6 +7,8 @@ import { topics } from "./lib/topics";
 export default function Home() {
   const featuredGuideSlugs = ["dimensional-weight-carrier-divisors", "standard-pallet-sizes-carton-fit", "calculate-lcl-wm-multiple-cartons", "lcl-minimum-charges-local-fees"];
   const featuredGuides = featuredGuideSlugs.map((slug) => guides.find((guide) => guide.slug === slug)).filter((guide): guide is (typeof guides)[number] => Boolean(guide));
+  const priorityToolSlugs = ["pallet-load-calculator", "dimensional-weight-calculator", "cbm-calculator", "lcl-chargeable-volume-calculator", "landed-cost-calculator"];
+  const priorityTools = priorityToolSlugs.map((slug) => tools.find((tool) => tool.slug === slug)).filter((tool): tool is (typeof tools)[number] => Boolean(tool));
   return (
     <main>
       <SiteHeader />
@@ -55,6 +57,16 @@ export default function Home() {
           <div><strong>{guides.length}</strong><span>practical guides</span></div>
           <div><strong>0</strong><span>accounts required</span></div>
           <p>Built for quick estimates before you quote, pack, or ship.</p>
+        </div>
+      </section>
+
+      <section className="tools-section shell" aria-labelledby="popular-calculators">
+        <div className="section-heading">
+          <div><p className="eyebrow">Most-used freight questions</p><h2 id="popular-calculators">Start with the job<br />you need to finish.</h2></div>
+          <p>These five calculators cover pallet capacity, dimensional weight, shipment cube, LCL W/M, and landed cost from quote to unit economics.</p>
+        </div>
+        <div className="tool-grid">
+          {priorityTools.map((tool, index) => <Link className="tool-card" href={`/tools/${tool.slug}`} key={tool.slug}><div className="tool-card-top"><span className="tool-number">0{index + 1}</span><span className="tool-arrow" aria-hidden="true">↗</span></div><div><p className="tool-kicker">{tool.category}</p><h3>{tool.shortTitle}</h3><p>{tool.description}</p></div><span className="tool-tag">{tool.tag}</span></Link>)}
         </div>
       </section>
 
@@ -111,7 +123,7 @@ export default function Home() {
       <section className="workflow-section">
         <div className="shell workflow-grid">
           <div>
-            <p className="eyebrow eyebrow-light">Why FreightKit</p>
+            <p className="eyebrow eyebrow-light">Why ShipMathLab</p>
             <h2>Fast enough for a call.<br />Clear enough for a quote.</h2>
           </div>
           <ol className="workflow-list">

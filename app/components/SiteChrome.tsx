@@ -4,17 +4,15 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="shell header-inner">
-        <Link className="brand" href="/" aria-label="FreightKit home">
-          <span className="brand-mark" aria-hidden="true">FK</span>
-          <span>FreightKit</span>
+        <Link className="brand" href="/" aria-label="ShipMathLab home">
+          <span className="brand-mark" aria-hidden="true">SM</span>
+          <span>ShipMathLab</span>
         </Link>
         <nav className="site-nav" aria-label="Primary navigation">
           <Link href="/#all-tools">All tools</Link>
           <Link href="/freight-planner">Freight planner</Link>
           <Link href="/questions">Questions</Link>
           <Link href="/guides">Guides</Link>
-          <Link href="/freight-planner">Freight decision planner</Link>
-          <Link href="/questions">Freight questions</Link>
           <Link href="/resources">Resources</Link>
           <Link href="/embed">Embed</Link>
           <Link href="/methodology">Method</Link>
@@ -31,8 +29,8 @@ export function SiteFooter() {
       <div className="shell footer-main">
         <div>
           <Link className="brand" href="/">
-            <span className="brand-mark" aria-hidden="true">FK</span>
-            <span>FreightKit</span>
+            <span className="brand-mark" aria-hidden="true">SM</span>
+            <span>ShipMathLab</span>
           </Link>
           <p className="footer-statement">Useful packaging decisions start with transparent math.</p>
         </div>

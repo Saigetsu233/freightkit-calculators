@@ -3,7 +3,7 @@ import test from "node:test";
 
 const toolRoutes = [
   ["dimensional-weight-calculator", "Dimensional Weight Calculator", "8 kg"],
-  ["cbm-calculator", "CBM &amp; Volume Calculator", "2.016 m³"],
+  ["cbm-calculator", "CBM Calculator — Cubic Metres for Freight &amp; Shipping", "2.016 m³"],
   ["carton-fit-calculator", "Carton Fit Calculator", "50 items"],
   ["pallet-load-calculator", "Pallet Loading Calculator", "54 cartons"],
   ["container-loading-calculator", "Container Loading Calculator", "270 cartons"],
@@ -40,13 +40,13 @@ function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-test("server-renders the finished FreightKit homepage", async () => {
+test("server-renders the finished ShipMathLab homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /FreightKit/);
+  assert.match(html, /ShipMathLab/);
   assert.match(html, /Packaging math/);
   assert.match(html, /Browse all 20 tools/);
   assert.match(html, /Browse all [\s\S]{0,30}25[\s\S]{0,30} guides/);
@@ -127,7 +127,7 @@ test("focus tools expose trusted references and free embeds", async () => {
 
     const embed = await render(`/embed/${slug}`);
     assert.equal(embed.status, 200, `embed ${slug}`);
-    assert.match(await embed.text(), /Powered by FreightKit/, `embed ${slug}`);
+    assert.match(await embed.text(), /Powered by ShipMathLab/, `embed ${slug}`);
   }
 });
 

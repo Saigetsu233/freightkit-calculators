@@ -44,4 +44,30 @@ export const priorityToolContent: Record<string, PriorityToolContent> = {
       "Treating an estimate as a booking confirmation or customs declaration.",
     ],
   },
+  "cbm-calculator": {
+    searchLead: "Calculate freight CBM from packed outside dimensions and quantity, with centimetre, metre, inch, and foot inputs converted automatically.",
+    useWhen: [
+      "You need total cubic metres for a freight quote or booking request.",
+      "You have repeated cartons, crates, or pallets in one consistent size.",
+      "You want CBM, cubic feet, litres, and volume per piece from the same inputs.",
+    ],
+    notFor: [
+      "Assuming carton cube equals a larger palletised or irregular outside envelope.",
+      "Choosing chargeable air or LCL weight without also entering gross weight.",
+      "Replacing a carrier's measurement, minimum, or rounding rule.",
+    ],
+  },
+  "landed-cost-calculator": {
+    searchLead: "Turn supplier price, international freight, duty, import tax, clearance fees, and quantity into an all-in landed cost per unit.",
+    useWhen: [
+      "You are comparing suppliers or import scenarios on an all-in basis.",
+      "You need to expose freight, duty, tax, brokerage, and other fees separately.",
+      "You want a repeatable unit-cost estimate before setting a selling price.",
+    ],
+    notFor: [
+      "Selecting a tariff code, origin rule, customs value, or tax base.",
+      "Assuming one duty and import-tax method works in every jurisdiction.",
+      "Replacing a customs broker's entry calculation or a binding government ruling.",
+    ],
+  },
 };

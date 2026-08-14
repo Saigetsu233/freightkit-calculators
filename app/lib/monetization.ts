@@ -1,5 +1,5 @@
 export const product = {
-  name: "FreightKit Operations Workbook",
+  name: "ShipMathLab Operations Workbook",
   price: 19,
   checkoutUrl: process.env.NEXT_PUBLIC_PRODUCT_URL || null,
 };
