@@ -15,19 +15,19 @@ export default function Home() {
 
       <section className="hero shell">
         <div className="hero-copy">
-          <p className="eyebrow">Free packaging &amp; freight calculators</p>
-          <h1>Packaging math,<br />without the spreadsheet.</h1>
+          <p className="eyebrow">20 packaging &amp; freight calculators</p>
+          <h1>Calculate shipping weight,<br />capacity, and cost.</h1>
           <p className="hero-lede">
-            Twenty practical calculators for ecommerce, warehouse, and freight teams.
-            Check dimensional weight, carton fit, pallet loads, shipping cost, and
-            margin—in seconds.
+            Enter carton, pallet, shipment, or cost details and see the result immediately.
+            Use the included presets for dimensional weight, pallet size, LCL W/M,
+            landed cost, and more.
           </p>
           <div className="hero-actions">
             <Link className="button button-primary" href="/tools/dimensional-weight-calculator">
               Calculate dimensional weight <span aria-hidden="true">↗</span>
             </Link>
-            <Link className="text-link" href="/freight-planner">Open the freight decision planner →</Link>
-            <a className="text-link" href="#all-tools">Browse all 20 tools</a>
+            <Link className="text-link" href="/freight-planner">Freight planner →</Link>
+            <a className="text-link" href="#all-tools">All 20 calculators</a>
           </div>
           <div className="trust-row" aria-label="Product qualities">
             <span>No sign-up</span><span>Runs in your browser</span><span>Clear formulas</span>
@@ -53,17 +53,17 @@ export default function Home() {
 
       <section className="signal-strip">
         <div className="shell signal-grid">
-          <div><strong>20</strong><span>focused calculators</span></div>
-          <div><strong>{guides.length}</strong><span>practical guides</span></div>
-          <div><strong>0</strong><span>accounts required</span></div>
-          <p>Built for quick estimates before you quote, pack, or ship.</p>
+          <div><strong>20</strong><span>shipping calculators</span></div>
+          <div><strong>{guides.length}</strong><span>worked guides</span></div>
+          <div><strong>Instant</strong><span>results as you type</span></div>
+          <p>Use the result while checking a quote, packing plan, or shipment.</p>
         </div>
       </section>
 
       <section className="tools-section shell" aria-labelledby="popular-calculators">
         <div className="section-heading">
-          <div><p className="eyebrow">Most-used freight questions</p><h2 id="popular-calculators">Start with the job<br />you need to finish.</h2></div>
-          <p>These five calculators cover pallet capacity, dimensional weight, shipment cube, LCL W/M, and landed cost from quote to unit economics.</p>
+          <div><p className="eyebrow">Common calculations</p><h2 id="popular-calculators">Start with the number<br />you need.</h2></div>
+          <p>Calculate pallet capacity, dimensional weight, shipment volume, LCL chargeable volume, or landed cost.</p>
         </div>
         <div className="tool-grid">
           {priorityTools.map((tool, index) => <Link className="tool-card" href={`/tools/${tool.slug}`} key={tool.slug}><div className="tool-card-top"><span className="tool-number">0{index + 1}</span><span className="tool-arrow" aria-hidden="true">↗</span></div><div><p className="tool-kicker">{tool.category}</p><h3>{tool.shortTitle}</h3><p>{tool.description}</p></div><span className="tool-tag">{tool.tag}</span></Link>)}
@@ -73,10 +73,10 @@ export default function Home() {
       <section className="tools-section shell" id="all-tools">
         <div className="section-heading">
           <div>
-            <p className="eyebrow">The working set</p>
-            <h2>Pick a calculation.<br />Get a useful answer.</h2>
+            <p className="eyebrow">All calculators</p>
+            <h2>Choose a calculation.<br />Enter your shipment details.</h2>
           </div>
-          <p>Every tool includes the formula, assumptions, and a copyable result. No hidden spreadsheet logic.</p>
+          <p>Each tool shows the formula, important limits, and a result you can copy or print.</p>
         </div>
 
         <div className="tool-grid">
@@ -99,32 +99,32 @@ export default function Home() {
 
       <section className="home-guides shell">
         <div className="section-heading">
-          <div><p className="eyebrow">From answer to action</p><h2>Use the number.<br/>Know its limits.</h2></div>
-          <p>Original working guides connect each formula to measurements, quote checks, warehouse trials, and decisions.</p>
+          <div><p className="eyebrow">Examples and guides</p><h2>Measure correctly.<br/>Check the result.</h2></div>
+          <p>Use worked examples for carrier divisors, pallet sizes, LCL quotes, measurements, and common errors.</p>
         </div>
         <div className="home-guide-grid">{featuredGuides.map((guide)=><Link href={`/guides/${guide.slug}`} key={guide.slug}><span>{guide.category} · {guide.readTime}</span><h3>{guide.title}</h3><p>{guide.description}</p></Link>)}</div>
         <Link className="text-link collection-link" href="/guides">Browse all {guides.length} guides ↗</Link>
       </section>
 
       <section className="home-topics shell">
-        <div className="section-heading"><div><p className="eyebrow">Three complete topic hubs</p><h2>From a question<br/>to a defensible answer.</h2></div><p>Short, citation-ready answers connect the formula, a worked example, primary references, the live calculator, and the longer operating guides.</p></div>
+        <div className="section-heading"><div><p className="eyebrow">Freight topics</p><h2>Formula, example,<br/>and calculator together.</h2></div><p>Each topic explains the calculation, shows a worked example, and links to the relevant tool and source.</p></div>
         <div className="topic-card-grid">{topics.map((topic)=><Link href={`/topics/${topic.slug}`} key={topic.slug}><span>{topic.category}</span><h3>{topic.title}</h3><p>{topic.description}</p><strong>Open topic reference ↗</strong></Link>)}</div>
       </section>
 
       <section className="network-band">
         <div className="shell network-band-inner">
-          <div><p className="eyebrow">More tools from the same maker</p><h2>Need to calculate the tax side too?</h2><p>TaxMathKit provides transparent calculators for federal income, 1099 work, sales tax, reverse tax, capital gains, and VAT.</p></div>
-          <a className="button button-primary" href="https://taxmathkit.com/?utm_source=shipmathlab&utm_medium=referral&utm_campaign=tool-network">Explore TaxMathKit <span aria-hidden="true">↗</span></a>
+          <div><p className="eyebrow">Tax calculations</p><h2>Need to calculate VAT or sales tax?</h2><p>TaxMathKit calculates sales tax, reverse tax, VAT, federal income tax, 1099 tax, and capital gains.</p></div>
+          <a className="button button-primary" href="https://taxmathkit.com/?utm_source=shipmathlab&utm_medium=referral&utm_campaign=tool-network">Open tax calculators <span aria-hidden="true">↗</span></a>
         </div>
       </section>
 
-      <section className="home-product"><div className="shell home-product-grid"><div><p className="eyebrow eyebrow-light">FreightKit Operations Workbook</p><h2>Keep the free tools.<br/>Buy the repeatable workflow.</h2><p>Batch DIM checks, freight quotes, pallet plans, landed cost, and ecommerce margin—connected in one editable Excel workbook.</p></div><div className="home-product-buy"><strong>$19</strong><span>one-time · no subscription</span><Link className="button button-acid" href="/resources#spreadsheet-pack">See what&apos;s included ↗</Link></div></div></section>
+      <section className="home-product"><div className="shell home-product-grid"><div><p className="eyebrow eyebrow-light">FreightKit Operations Workbook</p><h2>Run several shipments<br/>in one workbook.</h2><p>Batch DIM checks, compare freight quotes, plan pallets, and calculate landed cost and ecommerce margin in an editable Excel file.</p></div><div className="home-product-buy"><strong>$19</strong><span>one-time · no subscription</span><Link className="button button-acid" href="/resources#spreadsheet-pack">See the workbook ↗</Link></div></div></section>
 
       <section className="workflow-section">
         <div className="shell workflow-grid">
           <div>
-            <p className="eyebrow eyebrow-light">Why ShipMathLab</p>
-            <h2>Fast enough for a call.<br />Clear enough for a quote.</h2>
+            <p className="eyebrow eyebrow-light">How to use a calculator</p>
+            <h2>Enter, check,<br />and copy.</h2>
           </div>
           <ol className="workflow-list">
             <li><span>01</span><div><strong>Enter the known numbers</strong><p>Use your carton, pallet, carrier, and cost inputs.</p></div></li>

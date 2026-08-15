@@ -32,7 +32,7 @@ export function SiteFooter() {
             <span className="brand-mark" aria-hidden="true">SM</span>
             <span>ShipMathLab</span>
           </Link>
-          <p className="footer-statement">Useful packaging decisions start with transparent math.</p>
+          <p className="footer-statement">Calculators for packaging, pallets, freight, landed cost, and ecommerce margin.</p>
         </div>
         <nav className="footer-links" aria-label="Footer navigation">
           <Link href="/#all-tools">All calculators</Link>
@@ -50,7 +50,7 @@ export function SiteFooter() {
         </nav>
       </div>
       <div className="shell footer-bottom">
-        <span>© {new Date().getFullYear()} ShipMathLab · maintained by Saigetsu233</span>
+        <span>© {new Date().getFullYear()} ShipMathLab</span>
         <span>Planning estimates only. Verify critical figures with your carrier or supplier.</span>
       </div>
     </footer>

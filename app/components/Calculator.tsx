@@ -138,7 +138,7 @@ function CalculatorNextSteps({ steps }: { steps: NextStep[] }) {
 }
 
 function Frame({ children }: { children: React.ReactNode }) {
-  return <div className="calc-card"><div className="calc-card-header"><h2>Tell us what you know</h2><span className="live-badge">Live result</span></div><div className="guided-promise"><span>Answer ordinary shipping questions</span><strong>No freight expertise needed</strong><p>Use measurements, quantities or costs you already have. The worked example is ready to use, and ShipMathLab handles the formula and unit conversion while you edit.</p></div><div className="calc-form"><div className="field-grid">{children}</div></div></div>;
+  return <div className="calc-card"><div className="calc-card-header"><h2>Your shipment details</h2><span className="live-badge">Updates live</span></div><div className="guided-promise"><span>Example values are filled in</span><strong>Replace them with your measurements or costs</strong><p>The calculator applies the formula and unit conversion automatically.</p></div><div className="calc-form"><div className="field-grid">{children}</div></div></div>;
 }
 
 function CbmCalculator() {

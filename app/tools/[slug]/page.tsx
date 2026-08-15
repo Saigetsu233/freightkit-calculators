@@ -14,14 +14,14 @@ import { freightQuestions } from "../../lib/freight-questions";
 
 const taxRecommendations: Record<string, { title: string; description: string; href: string; label: string }> = {
   "ecommerce-margin-calculator": {
-    title: "Check the transaction tax behind the selling price.",
-    description: "TaxMathKit can add a verified sales-tax rate to a price or recover the pre-tax amount from a tax-inclusive total, with both formulas shown.",
+    title: "Add sales tax to the selling-price calculation.",
+    description: "TaxMathKit can add sales tax to a price or recover the pre-tax amount from a tax-inclusive total.",
     href: "https://taxmathkit.com/tools/sales-tax-calculator?utm_source=shipmathlab&utm_medium=referral&utm_campaign=tool-network",
     label: "Open the sales-tax calculator",
   },
   "landed-cost-calculator": {
-    title: "Need to add or extract VAT before finalizing landed cost?",
-    description: "TaxMathKit provides a currency-neutral VAT calculator with add and remove modes, visible formulas, rate presets, and a custom-rate input.",
+    title: "Add or remove VAT before calculating landed cost.",
+    description: "TaxMathKit includes VAT add and remove modes, country presets, and a custom-rate input.",
     href: "https://taxmathkit.com/tools/vat-calculator?utm_source=shipmathlab&utm_medium=referral&utm_campaign=tool-network",
     label: "Open the VAT calculator",
   },
@@ -90,16 +90,16 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
         </div>
       </section>
       <section id="calculator" className="calculator-band"><div className="shell">
-        {priority ? <div className="calculator-start"><div><p className="eyebrow">Prefilled worked example</p><strong>{tool.workedExample?.title ?? "Change any input to see the estimate update"}</strong><p>{priority.searchLead}</p><code className="calculator-formula">{tool.formula}</code></div><a className="button button-primary" href="#calculator">Run the example ↓</a></div> : null}
+        {priority ? <div className="calculator-start"><div><p className="eyebrow">Example values included</p><strong>{tool.workedExample?.title ?? "Change any input to update the estimate"}</strong><p>{priority.searchLead}</p><code className="calculator-formula">{tool.formula}</code></div><a className="button button-primary" href="#calculator">Start with the example ↓</a></div> : null}
         <div className="calculator-shell"><Calculator slug={tool.slug} nextSteps={nextSteps} /></div>
       </div></section>
       <FormulaFlow slug={tool.slug} />
       {priority ? <section className="shell tool-intent-grid" aria-label="When to use this calculator"><article><p className="eyebrow">Use this when</p><h2>Questions this estimate can answer</h2><ul>{priority.useWhen.map((item) => <li key={item}>{item}</li>)}</ul></article><article><p className="eyebrow">Not for</p><h2>Checks you still need to make</h2><ul>{priority.notFor.map((item) => <li key={item}>{item}</li>)}</ul></article></section> : null}
-      {toolQuestions.length ? <section className="shell tool-guides"><p className="eyebrow">Start with your freight question</p><div className="tool-guide-grid">{toolQuestions.map((question) => <Link href={`/questions/${question.slug}`} key={question.slug}><span>{question.toolLabel}</span><strong>{question.title} ↗</strong><p>{question.description}</p></Link>)}</div></section> : null}
-      <section className="shell tool-product-cta"><div><p className="eyebrow">Need the repeatable version?</p><h2>Carry this result into the $19 operations workbook.</h2><p>Batch calculations, quote comparisons, landed cost, pallet planning, and margin sheets stay connected in one editable Excel file.</p></div><Link className="button button-primary" href="/resources#spreadsheet-pack">Preview the workbook ↗</Link></section>
+      {toolQuestions.length ? <section className="shell tool-guides"><p className="eyebrow">Related questions</p><div className="tool-guide-grid">{toolQuestions.map((question) => <Link href={`/questions/${question.slug}`} key={question.slug}><span>{question.toolLabel}</span><strong>{question.title} ↗</strong><p>{question.description}</p></Link>)}</div></section> : null}
+      <section className="shell tool-product-cta"><div><p className="eyebrow">Several shipments to calculate?</p><h2>Use the $19 operations workbook for batch work.</h2><p>Compare quotes and keep landed cost, pallet plans, DIM checks, and margin calculations in one editable Excel file.</p></div><Link className="button button-primary" href="/resources#spreadsheet-pack">See the workbook ↗</Link></section>
       <section className="shell method-section">
         <div><p className="eyebrow">Method &amp; limits</p><h2>How this estimate works</h2></div>
-        <div className="method-copy"><p>ShipMathLab keeps the working visible so you can sense-check the answer before using it in a decision.</p><div className="formula-box">{tool.formula}</div><p>{tool.assumption}</p>{topic ? <Link className="topic-inline-link" href={`/topics/${topic.slug}`}>Explore the complete {topic.shortTitle} reference ↗</Link> : null}{tool.sources?.length ? <div className="tool-sources"><strong>Primary references</strong>{tool.sources.map((source) => <a href={source.url} key={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a>)}</div> : null}<p className="fine-print">This calculator is a planning aid, not a carrier quotation, engineering assessment, or professional advice. Verify critical figures against current supplier and carrier documentation.</p></div>
+        <div className="method-copy"><p>The result uses the formula below. Check the measurements, unit setting, and applicable carrier or supplier rule before using it.</p><div className="formula-box">{tool.formula}</div><p>{tool.assumption}</p>{topic ? <Link className="topic-inline-link" href={`/topics/${topic.slug}`}>Related {topic.shortTitle} guide ↗</Link> : null}{tool.sources?.length ? <div className="tool-sources"><strong>References</strong>{tool.sources.map((source) => <a href={source.url} key={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a>)}</div> : null}<p className="fine-print">This calculator is a planning aid, not a carrier quotation, engineering assessment, or professional advice. Verify critical figures against current supplier and carrier documentation.</p></div>
       </section>
       {tool.workedExample ? <section className="shell evidence-grid" aria-label="Worked example and common mistakes">
         <article className="evidence-card example-card"><p className="eyebrow">Worked example</p><h2>{tool.workedExample.title}</h2><ol>{tool.workedExample.steps.map((step) => <li key={step}>{step}</li>)}</ol><p className="evidence-result"><strong>Result</strong>{tool.workedExample.result}</p></article>
@@ -107,9 +107,9 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
       </section> : null}
       {taxRecommendation ? <section className="shell network-inline"><div><span>Related tax calculation · TaxMathKit</span><h2>{taxRecommendation.title}</h2><p>{taxRecommendation.description}</p></div><a className="text-link" href={taxRecommendation.href}>{taxRecommendation.label} ↗</a></section> : null}
       {embeddable ? <EmbedPanel slug={tool.slug} title={tool.title} /> : null}
-      {guides.length ? <section className="shell tool-guides"><p className="eyebrow">Use the number well</p><div className="tool-guide-grid">{guides.map((guide)=><Link href={`/guides/${guide.slug}`} key={guide.slug}><span>{guide.readTime}</span><strong>{guide.title} ↗</strong><p>{guide.description}</p></Link>)}</div></section> : null}
+      {guides.length ? <section className="shell tool-guides"><p className="eyebrow">Examples and guides</p><div className="tool-guide-grid">{guides.map((guide)=><Link href={`/guides/${guide.slug}`} key={guide.slug}><span>{guide.readTime}</span><strong>{guide.title} ↗</strong><p>{guide.description}</p></Link>)}</div></section> : null}
       {partner?.url ? <section className="shell partner-inline"><span>Relevant partner resource</span><div><h2>{partner.name}</h2><p>{partner.description}</p></div><a className="text-link" href={partner.url} target="_blank" rel="sponsored noopener noreferrer">View recommendation ↗</a></section> : null}
-      <section className="shell next-tools"><p className="eyebrow">Keep calculating</p><h2>Related tools</h2><div className="next-grid">{related.map((item)=><Link className="next-card" key={item.slug} href={`/tools/${item.slug}`}><span>{item.category}</span><strong>{item.shortTitle} ↗</strong></Link>)}</div></section>
+      <section className="shell next-tools"><p className="eyebrow">Next calculation</p><h2>Related tools</h2><div className="next-grid">{related.map((item)=><Link className="next-card" key={item.slug} href={`/tools/${item.slug}`}><span>{item.category}</span><strong>{item.shortTitle} ↗</strong></Link>)}</div></section>
       <SiteFooter />
     </main>
   );

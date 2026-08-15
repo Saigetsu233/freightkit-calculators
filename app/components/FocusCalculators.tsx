@@ -62,7 +62,7 @@ function ProSelectField({ label, value, onChange, options, wide = false }: {
 }
 
 function ProFrame({ title = "Tell us what you know", guidance, children }: { title?: string; guidance: string; children: React.ReactNode }) {
-  return <div className="calc-card"><div className="calc-card-header"><h2>{title}</h2><span className="live-badge">Live result</span></div><div className="guided-promise"><span>Answer ordinary shipping questions</span><strong>No freight expertise needed</strong><p>{guidance}</p></div><div className="calc-form"><div className="field-grid">{children}</div></div></div>;
+  return <div className="calc-card"><div className="calc-card-header"><h2>{title}</h2><span className="live-badge">Updates live</span></div><div className="guided-promise"><span>Example values are filled in</span><strong>Replace them with your shipment details</strong><p>{guidance}</p></div><div className="calc-form"><div className="field-grid">{children}</div></div></div>;
 }
 
 function OptionalFields({ title, children }: { title: string; children: React.ReactNode }) {
