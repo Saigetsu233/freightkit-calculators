@@ -145,7 +145,7 @@ async function recordAnalytics(request: Request, env: Env) {
 
     const eventDate = new Date().toISOString().slice(0, 10);
     const visitorHash = await dailyVisitorHash(eventDate, request, env.ANALYTICS_SALT);
-    const allowedEvents = new Set(["tool_open", "calculator_visible", "input_started", "calculation_completed", "copy_result", "guide_to_tool", "embed_view", "decision_card_copy", "share_link_copy"]);
+    const allowedEvents = new Set(["tool_open", "calculator_visible", "input_started", "valid_result_generated", "result_viewed", "calculation_completed", "copy_result", "guide_to_tool", "embed_view", "decision_card_copy", "share_link_copy"]);
     const eventType = typeof payload.eventType === "string" && allowedEvents.has(payload.eventType) ? payload.eventType : "";
     if (eventType) {
       const eventLabel = typeof payload.eventLabel === "string" ? payload.eventLabel.trim().slice(0, 160) : "";

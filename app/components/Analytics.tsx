@@ -22,7 +22,7 @@ function send(payload: Record<string, unknown>) {
   void fetch("/api/analytics", { method: "POST", headers: { "content-type": "application/json" }, body, keepalive: true });
 }
 
-export function trackAnalyticsEvent(eventType: "tool_open" | "calculator_visible" | "input_started" | "calculation_completed" | "copy_result" | "guide_to_tool" | "embed_view" | "decision_card_copy" | "share_link_copy", eventLabel = "", sourceHost = "") {
+export function trackAnalyticsEvent(eventType: "tool_open" | "calculator_visible" | "input_started" | "valid_result_generated" | "result_viewed" | "calculation_completed" | "copy_result" | "guide_to_tool" | "embed_view" | "decision_card_copy" | "share_link_copy", eventLabel = "", sourceHost = "") {
   if (typeof window === "undefined" || navigator.doNotTrack === "1") return;
   send({ path: window.location.pathname, isInternal: isInternalBrowser(), eventType, eventLabel, sourceHost });
 }
@@ -51,23 +51,7 @@ export function Analytics() {
     }
     if (pathname.startsWith("/tools/")) {
       trackAnalyticsEvent("tool_open", pathname.replace("/tools/", ""));
-      let sentCompletion = false;
-      let timer = 0;
-      const recordCompletion = (event: Event) => {
-        if (sentCompletion || !(event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement)) return;
-        window.clearTimeout(timer);
-        timer = window.setTimeout(() => {
-          sentCompletion = true;
-          trackAnalyticsEvent("calculation_completed", pathname.replace("/tools/", ""));
-        }, 700);
-      };
-      document.addEventListener("input", recordCompletion, { passive: true });
-      document.addEventListener("change", recordCompletion, { passive: true });
-      return () => {
-        window.clearTimeout(timer);
-        document.removeEventListener("input", recordCompletion);
-        document.removeEventListener("change", recordCompletion);
-      };
+      return;
     }
     if (pathname.startsWith("/guides/")) {
       const recordGuideExit = (event: MouseEvent) => {

@@ -21,20 +21,20 @@ export type ToolDefinition = {
 export const tools: ToolDefinition[] = [
   {
     slug: "dimensional-weight-calculator",
-    title: "Dimensional Weight Calculator with FedEx, UPS, DHL & USPS Divisors",
-    shortTitle: "Dimensional Weight",
+    title: "FedEx, UPS, USPS & DHL Dimensional Weight Comparison",
+    shortTitle: "Carrier DIM Comparison",
     category: "Parcel",
     tag: "kg · lb",
-    description: "Enter a packed box size and scale weight; the calculator chooses a planning rule and shows the likely billed weight.",
-    intro: "No divisor knowledge required: choose the closest shipping setup, enter the sealed parcel size and scale weight, and compare actual with dimensional weight automatically.",
+    description: "Enter one packed box and compare dimensional and billable weight across five common carrier billing rules without looking up a divisor.",
+    intro: "Enter the sealed parcel size and scale weight once. ShipMathLab compares FedEx, UPS Daily, UPS Retail, USPS and DHL side by side, shows which rules bill on size, and estimates how much smaller the box must be to avoid DIM weight.",
     formula: "Dimensional weight = (length × width × height) ÷ divisor",
     assumption: "Carriers use different divisors by service, account, and destination. Confirm the divisor and rounding rules on your rate card before quoting.",
-    reviewed: "August 11, 2026",
+    reviewed: "August 16, 2026",
     sources: [
       { label: "FedEx dimensional weight guidance", url: "https://www.fedex.com/en-us/shipping/packaging/what-is-dimensional-weight.html" },
       { label: "UPS dimensional weight and rate-type divisors", url: "https://developer.ups.com/us/en/support/shipping-support/shipping-dimensions-weight" },
       { label: "DHL volumetric weight guidance", url: "https://www.dhl.com/discover/en-gb/ship-with-dhl/products-and-services/weight-and-dimensions" },
-      { label: "USPS dimensional weight example", url: "https://pe.usps.com/QSG_Archive/NHTML/QSG_Archive_20250119/Q201e.htm" },
+      { label: "USPS July 2026 DIM-factor update", url: "https://about.usps.com/postal-bulletin/2026/pb22705/pb22705.pdf" },
     ],
     workedExample: {
       title: "50 × 40 × 30 cm parcel at a 5,000 divisor",

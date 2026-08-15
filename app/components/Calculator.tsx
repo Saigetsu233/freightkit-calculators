@@ -272,16 +272,41 @@ export function Calculator({ slug, nextSteps = [] }: { slug: string; nextSteps?:
       });
     }
     let sentInputStarted = false;
+    let sentCompletion = false;
+    let sentResultViewed = false;
+    let resultIsVisible = false;
+    let completionTimer = 0;
+    const resultPanel = root.querySelector<HTMLElement>(".result-card");
+    const resultObserver = resultPanel && typeof IntersectionObserver !== "undefined" ? new IntersectionObserver((entries) => {
+      resultIsVisible = entries.some((entry) => entry.isIntersecting && entry.intersectionRatio >= 0.35);
+      if (sentInputStarted && resultIsVisible && !sentResultViewed) {
+        sentResultViewed = true;
+        trackAnalyticsEvent("result_viewed", slug);
+      }
+    }, { threshold: [0.35] }) : null;
+    if (resultPanel && resultObserver) resultObserver.observe(resultPanel);
     const markInteracted = () => {
       setHasInteracted(true);
       if (!sentInputStarted) {
         sentInputStarted = true;
         trackAnalyticsEvent("input_started", slug);
       }
+      if (resultIsVisible && !sentResultViewed) {
+        sentResultViewed = true;
+        trackAnalyticsEvent("result_viewed", slug);
+      }
+      if (!sentCompletion) {
+        window.clearTimeout(completionTimer);
+        completionTimer = window.setTimeout(() => {
+          sentCompletion = true;
+          trackAnalyticsEvent("valid_result_generated", slug);
+          trackAnalyticsEvent("calculation_completed", slug);
+        }, 700);
+      }
     };
     root.addEventListener("input", markInteracted);
     root.addEventListener("change", markInteracted);
-    return () => { root.removeEventListener("input", markInteracted); root.removeEventListener("change", markInteracted); };
+    return () => { resultObserver?.disconnect(); window.clearTimeout(completionTimer); root.removeEventListener("input", markInteracted); root.removeEventListener("change", markInteracted); };
   }, [slug]);
   const calculators: Record<string, React.ReactNode> = {
     "dimensional-weight-calculator": <DimensionalWeightPro />, "cbm-calculator": <CbmCalculator />, "carton-fit-calculator": <CartonFit />, "pallet-load-calculator": <PalletLoadPro />, "container-loading-calculator": <ContainerLoading />, "package-girth-calculator": <PackageGirth />, "shipping-unit-converter": <UnitConverter />, "corrugated-box-cost-calculator": <BoxCost />, "shipping-cost-estimator": <ShippingCost />, "ecommerce-margin-calculator": <MarginCalculator />,

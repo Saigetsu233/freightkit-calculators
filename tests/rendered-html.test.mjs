@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 const toolRoutes = [
-  ["dimensional-weight-calculator", "Dimensional Weight Calculator", "8 kg"],
+  ["dimensional-weight-calculator", "FedEx, UPS, USPS &amp; DHL Dimensional Weight Comparison", "18 lb"],
   ["cbm-calculator", "CBM Calculator — Cubic Metres for Freight &amp; Shipping", "2.016 m³"],
   ["carton-fit-calculator", "Carton Fit Calculator", "50 items"],
   ["pallet-load-calculator", "Pallet Loading Calculator", "54 cartons"],
@@ -47,8 +47,8 @@ test("server-renders the finished ShipMathLab homepage", async () => {
 
   const html = await response.text();
   assert.match(html, /ShipMathLab/);
-  assert.match(html, /Packaging math/);
-  assert.match(html, /Browse all 20 tools/);
+  assert.match(html, /20 packaging &amp; freight calculators/);
+  assert.match(html, /All 20 calculators/);
   assert.match(html, /Browse all [\s\S]{0,30}25[\s\S]{0,30} guides/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/);
   for (const [slug] of toolRoutes) assert.match(html, new RegExp(`/tools/${slug}`));
@@ -60,9 +60,9 @@ test("all twenty calculator routes render their working interface", async () => 
     assert.equal(response.status, 200, slug);
     const html = await response.text();
     assert.match(html, new RegExp(escapeRegExp(title)), slug);
-    assert.match(html, /Tell us what you know/, slug);
-    assert.match(html, /No freight expertise needed/, slug);
-    assert.match(html, /Live result/, slug);
+    assert.match(html, /guided-promise/, slug);
+    assert.match(html, /Updates live/, slug);
+    assert.match(html, /result-card/, slug);
     assert.match(html, new RegExp(`result-primary[^>]*>${escapeRegExp(expectedResult)}`), `${slug} default result`);
     assert.match(html, /How this estimate works/, slug);
     assert.match(html, /Copy result summary/, slug);
@@ -72,8 +72,10 @@ test("all twenty calculator routes render their working interface", async () => 
 test("priority calculators start from facts a non-specialist already knows", async () => {
   const dimensional = await render("/tools/dimensional-weight-calculator");
   const dimensionalHtml = await dimensional.text();
-  assert.match(dimensionalHtml, /I’m not sure — metric planning estimate/);
+  assert.match(dimensionalHtml, /Enter the package once/);
   assert.match(dimensionalHtml, /Scale weight for one parcel/);
+  assert.match(dimensionalHtml, /UPS Retail/);
+  assert.match(dimensionalHtml, /Likely billed-weight range/);
 
   const pallet = await render("/tools/pallet-load-calculator");
   const palletHtml = await pallet.text();
@@ -98,7 +100,7 @@ test("guides and monetisation resources render", async () => {
   const guides = await render("/guides");
   assert.equal(guides.status, 200);
   const guideHtml = await guides.text();
-  assert.match(guideHtml, /25[\s\S]{0,30} practical workflows/);
+  assert.match(guideHtml, /25[\s\S]{0,30} guides for packaging/);
   assert.match(guideHtml, /dimensional-weight-packaging-audit/);
 
   const article = await render("/guides/landed-cost-model-for-imports");
@@ -121,7 +123,7 @@ test("focus tools expose trusted references and free embeds", async () => {
     assert.equal(tool.status, 200, slug);
     const toolHtml = await tool.text();
     assert.match(toolHtml, /Free to embed/, slug);
-    assert.match(toolHtml, /Primary references/, slug);
+    assert.match(toolHtml, /References/, slug);
     assert.match(toolHtml, /application\/ld\+json/, slug);
     assert.match(toolHtml, /formula-flow/, slug);
 

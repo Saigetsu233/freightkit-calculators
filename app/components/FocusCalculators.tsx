@@ -69,7 +69,7 @@ function OptionalFields({ title, children }: { title: string; children: React.Re
   return <details className="advanced-fields"><summary>{title}<span>Optional</span></summary><div className="advanced-field-grid">{children}</div></details>;
 }
 
-function ProResult({ label, primary, metrics, note }: { label: string; primary: string; metrics: Metric[]; note: string }) {
+function ProResult({ label, primary, metrics, note, children }: { label: string; primary: string; metrics: Metric[]; note: string; children?: React.ReactNode }) {
   const [copied, setCopied] = useState(false);
   const summary = `${label}: ${primary}. ${metrics.map((metric) => `${metric.label}: ${metric.value}`).join(". ")}.`;
 
@@ -91,76 +91,117 @@ function ProResult({ label, primary, metrics, note }: { label: string; primary: 
       <div className="result-grid">
         {metrics.map((metric) => <div className="result-metric" key={metric.label}><span>{metric.label}</span><strong>{metric.value}</strong></div>)}
       </div>
+      {children}
       <p className="result-note">{note}</p>
       <div className="result-actions"><button type="button" className="copy-button" onClick={copyResult}>{copied ? "Copied to clipboard ✓" : "Copy result summary"}</button><button type="button" className="copy-button" onClick={() => window.print()}>Print result</button></div>
     </aside>
   );
 }
 
-const dimPresets = {
-  "metric-planning": { label: "I’m not sure — metric planning estimate (÷ 5,000)", system: "metric", divisor: 5000, rounding: .5 },
-  "dhl-metric": { label: "DHL Express — metric example (÷ 5,000)", system: "metric", divisor: 5000, rounding: .5 },
-  "fedex-us": { label: "FedEx — US/international example (÷ 139)", system: "imperial", divisor: 139, rounding: 1 },
-  "ups-daily": { label: "UPS Daily Rates — example (÷ 139)", system: "imperial", divisor: 139, rounding: 1 },
-  "ups-retail": { label: "UPS Retail Rates — example (÷ 166)", system: "imperial", divisor: 166, rounding: 1 },
-  "usps": { label: "USPS — planning example (÷ 166)", system: "imperial", divisor: 166, rounding: 1 },
-  "custom-metric": { label: "I know my metric divisor", system: "metric", divisor: 5000, rounding: 0 },
-  "custom-imperial": { label: "I know my imperial divisor", system: "imperial", divisor: 139, rounding: 0 },
+const carrierRules = [
+  { key: "fedex", carrier: "FedEx", service: "Common U.S. parcel planning", imperialDivisor: 139, metricDivisor: 5000, imperialRounding: 1, metricRounding: .5 },
+  { key: "ups-daily", carrier: "UPS Daily", service: "Account / daily-rate planning", imperialDivisor: 139, metricDivisor: 5000, imperialRounding: 1, metricRounding: .5 },
+  { key: "ups-retail", carrier: "UPS Retail", service: "Retail-rate planning", imperialDivisor: 166, metricDivisor: 6000, imperialRounding: 1, metricRounding: 1 },
+  { key: "usps", carrier: "USPS", service: "2026 competitive-product DIM factor", imperialDivisor: 139, metricDivisor: 5000, imperialRounding: 1, metricRounding: 1 },
+  { key: "dhl", carrier: "DHL Express", service: "International express planning", imperialDivisor: 139, metricDivisor: 5000, imperialRounding: 1, metricRounding: .5 },
+] as const;
+
+const packagePresets = {
+  custom: { label: "Enter my own package", metric: [40, 30, 25, 8], imperial: [16, 12, 10, 18] },
+  small: { label: "Small parcel · about a shoe box", metric: [33, 20, 12, 2], imperial: [13, 8, 5, 4.5] },
+  medium: { label: "Medium shipping box", metric: [45, 35, 25, 6], imperial: [18, 14, 10, 13] },
+  large: { label: "Large lightweight box", metric: [60, 45, 40, 8], imperial: [24, 18, 16, 18] },
 } as const;
 
 export function DimensionalWeightPro() {
-  const [presetKey, setPresetKey] = useState<keyof typeof dimPresets>("metric-planning");
-  const [length, setLength] = useState("40");
-  const [width, setWidth] = useState("30");
-  const [height, setHeight] = useState("25");
-  const [actual, setActual] = useState("8");
+  const [system, setSystem] = useState<"imperial" | "metric">("imperial");
+  const [packagePreset, setPackagePreset] = useState<keyof typeof packagePresets>("custom");
+  const [length, setLength] = useState("16");
+  const [width, setWidth] = useState("12");
+  const [height, setHeight] = useState("10");
+  const [actual, setActual] = useState("18");
   const [quantity, setQuantity] = useState("1");
-  const [customDivisor, setCustomDivisor] = useState("5000");
-  const [rounding, setRounding] = useState("preset");
-  const preset = dimPresets[presetKey];
-  const metric = preset.system === "metric";
-  const isCustom = presetKey.startsWith("custom");
-  const divisor = isCustom ? numberValue(customDivisor) : preset.divisor;
-  const roundingIncrement = rounding === "preset" ? preset.rounding : numberValue(rounding);
-  const dimPer = divisor ? numberValue(length) * numberValue(width) * numberValue(height) / divisor : 0;
-  const rawChargeablePer = Math.max(dimPer, numberValue(actual));
-  const chargeablePer = roundUp(rawChargeablePer, roundingIncrement);
+  const [customDivisor, setCustomDivisor] = useState("");
+  const metric = system === "metric";
   const qty = Math.max(Math.floor(numberValue(quantity)), 0);
-  const total = chargeablePer * qty;
   const unit = metric ? "kg" : "lb";
+  const volume = numberValue(length) * numberValue(width) * numberValue(height);
 
-  function changePreset(value: string) {
-    const next = value as keyof typeof dimPresets;
-    setPresetKey(next);
-    setCustomDivisor(String(dimPresets[next].divisor));
-    setRounding("preset");
+  function applyPackagePreset(key: keyof typeof packagePresets, nextSystem = system) {
+    setPackagePreset(key);
+    if (key === "custom") return;
+    const [nextLength, nextWidth, nextHeight, nextWeight] = packagePresets[key][nextSystem];
+    setLength(String(nextLength));
+    setWidth(String(nextWidth));
+    setHeight(String(nextHeight));
+    setActual(String(nextWeight));
   }
 
+  function changeSystem(next: string) {
+    const nextSystem = next as "imperial" | "metric";
+    if (nextSystem === system) return;
+    const lengthFactor = nextSystem === "metric" ? 2.54 : 1 / 2.54;
+    const weightFactor = nextSystem === "metric" ? 0.453592 : 2.20462;
+    setLength(String(Number((numberValue(length) * lengthFactor).toFixed(2))));
+    setWidth(String(Number((numberValue(width) * lengthFactor).toFixed(2))));
+    setHeight(String(Number((numberValue(height) * lengthFactor).toFixed(2))));
+    setActual(String(Number((numberValue(actual) * weightFactor).toFixed(2))));
+    setSystem(nextSystem);
+    setPackagePreset("custom");
+  }
+
+  const comparisons = useMemo(() => carrierRules.map((rule) => {
+    const divisor = metric ? rule.metricDivisor : rule.imperialDivisor;
+    const rounding = metric ? rule.metricRounding : rule.imperialRounding;
+    const dimensional = divisor ? volume / divisor : 0;
+    const billable = roundUp(Math.max(dimensional, numberValue(actual)), rounding);
+    return { ...rule, divisor, dimensional, billable, total: billable * qty, basis: dimensional > numberValue(actual) ? "DIM" : "Actual", penalty: Math.max(0, billable - numberValue(actual)) };
+  }), [metric, volume, actual, qty]);
+
+  const custom = numberValue(customDivisor) > 0 ? (() => {
+    const dimensional = volume / numberValue(customDivisor);
+    const billable = Math.max(dimensional, numberValue(actual));
+    return { carrier: "Your contract", service: "Custom divisor", divisor: numberValue(customDivisor), dimensional, billable, total: billable * qty, basis: dimensional > numberValue(actual) ? "DIM" : "Actual", penalty: Math.max(0, billable - numberValue(actual)) };
+  })() : null;
+  const shownComparisons = custom ? [...comparisons, custom] : comparisons;
+  const totals = shownComparisons.map((item) => item.total);
+  const minimum = Math.min(...totals);
+  const maximum = Math.max(...totals);
+  const strictDivisor = metric ? 5000 : 139;
+  const targetVolume = numberValue(actual) * strictDivisor;
+  const shrinkPerSide = volume > targetVolume && volume > 0 ? (1 - Math.cbrt(targetVolume / volume)) * 100 : 0;
+  const primary = Math.abs(maximum - minimum) < .001 ? `${formatNumber(minimum)} ${unit}` : `${formatNumber(minimum)}–${formatNumber(maximum)} ${unit}`;
+
   return <>
-    <ProFrame guidance="Choose the closest shipping setup, then enter the sealed box size and the weight shown on a scale. We select the divisor, compare both weights and apply the example rounding rule.">
-      <ProSelectField label="Which shipping setup is closest?" value={presetKey} onChange={changePreset} options={Object.entries(dimPresets).map(([value, item]) => ({ value, label: item.label }))} wide />
+    <ProFrame title="Enter the package once" guidance="Use the finished outside dimensions and scale weight. We compare FedEx, UPS Daily, UPS Retail, USPS and DHL automatically—no divisor knowledge required.">
+      <ProSelectField label="Measurement units" value={system} onChange={changeSystem} options={[{ value: "imperial", label: "Inches and pounds" }, { value: "metric", label: "Centimetres and kilograms" }]} />
+      <ProSelectField label="Start with a common package" value={packagePreset} onChange={(value) => applyPackagePreset(value as keyof typeof packagePresets)} options={Object.entries(packagePresets).map(([value, item]) => ({ value, label: item.label }))} />
       <ProNumberField label="Packed parcel length" value={length} onChange={setLength} unit={metric ? "cm" : "in"} />
       <ProNumberField label="Packed parcel width" value={width} onChange={setWidth} unit={metric ? "cm" : "in"} />
       <ProNumberField label="Packed parcel height" value={height} onChange={setHeight} unit={metric ? "cm" : "in"} />
       <ProNumberField label="Scale weight for one parcel" value={actual} onChange={setActual} unit={unit} />
-      <p className="quick-assumption field-wide"><strong>What happens next:</strong> we calculate the space-based weight and automatically use the larger of that or the scale weight.</p>
-      <OptionalFields title="Add parcel count, divisor or rounding">
+      <p className="quick-assumption field-wide"><strong>What happens next:</strong> each carrier row calculates dimensional weight, compares it with the scale weight, applies its planning increment, and shows the likely billable weight.</p>
+      <OptionalFields title="Add parcel count or a contract divisor">
         <ProNumberField label="Number of identical parcels" value={quantity} onChange={setQuantity} step="1" />
-        {isCustom ? <ProNumberField label="Custom DIM divisor" value={customDivisor} onChange={setCustomDivisor} unit={metric ? "cm³/kg" : "in³/lb"} /> : <div className="field"><label>DIM divisor</label><div className="readout-field">{formatNumber(divisor, 0)} {metric ? "cm³/kg" : "in³/lb"}</div></div>}
-        <ProSelectField label="Chargeable-weight rounding" value={rounding} onChange={setRounding} options={[
-          { value: "preset", label: `Preset (${preset.rounding ? `up to ${preset.rounding} ${unit}` : "no rounding"})` },
-          { value: "0", label: "No rounding" },
-          { value: "0.5", label: `Round up to 0.5 ${unit}` },
-          { value: "1", label: `Round up to 1 ${unit}` },
-        ]} />
+        <ProNumberField label="Negotiated DIM divisor, if known" value={customDivisor} onChange={setCustomDivisor} unit={metric ? "cm³/kg" : "in³/lb"} hint="Leave blank to compare public planning rules only." />
       </OptionalFields>
     </ProFrame>
-    <ProResult label="Likely billed weight" primary={`${formatNumber(total)} ${unit}`} metrics={[
-      { label: "Dimensional / parcel", value: `${formatNumber(dimPer)} ${unit}` },
-      { label: "Actual / parcel", value: `${formatNumber(numberValue(actual))} ${unit}` },
-      { label: "Chargeable / parcel", value: `${formatNumber(chargeablePer)} ${unit}` },
-      { label: "Weight basis", value: dimPer > numberValue(actual) ? "Dimensional" : "Actual" },
-    ]} note="Preset rules are planning references. Confirm service eligibility, measurement rounding, divisor, and billing increments on your current rate card." />
+    <ProResult label={qty > 1 ? "Likely billed-weight range · shipment" : "Likely billed-weight range · parcel"} primary={primary} metrics={[
+      { label: "Scale weight / parcel", value: `${formatNumber(numberValue(actual))} ${unit}` },
+      { label: "Packages", value: formatNumber(qty, 0) },
+      { label: "Strict DIM threshold", value: shrinkPerSide > 0 ? `Shrink each side ≈ ${formatNumber(shrinkPerSide, 1)}%` : "Actual weight already competitive" },
+      { label: "Compared", value: `${shownComparisons.length} billing rules` },
+    ]} note="These rows compare billable weight, not shipping price. Service eligibility, zone, negotiated terms, measurement rounding, minimums and surcharges can change the invoice.">
+      <div className="carrier-comparison" role="table" aria-label="Carrier dimensional weight comparison">
+        <div className="carrier-row carrier-head" role="row"><span>Carrier</span><span>DIM</span><span>Billable</span><span>Basis</span></div>
+        {shownComparisons.map((item) => <div className="carrier-row" role="row" key={`${item.carrier}-${item.service}`}>
+          <span><strong>{item.carrier}</strong><small>{item.service} · ÷ {formatNumber(item.divisor, 0)}</small></span>
+          <span>{formatNumber(item.dimensional)} {unit}</span>
+          <span><strong>{formatNumber(item.total)} {unit}</strong>{qty > 1 ? <small>{formatNumber(item.billable)} each</small> : null}</span>
+          <span className={item.basis === "DIM" ? "basis-dim" : "basis-actual"}>{item.basis}{item.penalty > 0 ? <small>+{formatNumber(item.penalty)} {unit}</small> : null}</span>
+        </div>)}
+      </div>
+    </ProResult>
   </>;
 }
 
