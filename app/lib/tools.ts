@@ -6,6 +6,7 @@ export type ToolDefinition = {
   tag: string;
   description: string;
   intro: string;
+  metaDescription?: string;
   formula: string;
   assumption: string;
   reviewed?: string;
@@ -27,6 +28,7 @@ export const tools: ToolDefinition[] = [
     tag: "kg · lb",
     description: "Enter one packed box and compare dimensional and billable weight across five common carrier billing rules without looking up a divisor.",
     intro: "Enter the sealed parcel size and scale weight once. ShipMathLab compares FedEx, UPS Daily, UPS Retail, USPS and DHL side by side, shows which rules bill on size, and estimates how much smaller the box must be to avoid DIM weight.",
+    metaDescription: "Compare FedEx, UPS, USPS and DHL dimensional weight using carrier-specific dimension rounding, divisors, thresholds and billable-weight rules.",
     formula: "Dimensional weight = (length × width × height) ÷ divisor",
     assumption: "Carriers use different divisors by service, account, and destination. Confirm the divisor and rounding rules on your rate card before quoting.",
     reviewed: "August 16, 2026",
@@ -60,6 +62,7 @@ export const tools: ToolDefinition[] = [
     tag: "m³ · ft³",
     description: "Calculate shipping volume in cubic metres, cubic feet, and litres for cartons, crates, pallets, or a full freight shipment.",
     intro: "Enter the packed outside dimensions and quantity—no unit conversion required. The calculator returns total CBM, cubic feet, litres, and volume per piece for a freight quote.",
+    metaDescription: "Calculate freight volume in CBM, cubic feet and litres from carton dimensions and quantity. Supports metric and imperial measurements.",
     formula: "Total volume = length × width × height × quantity",
     assumption: "This is external carton volume. It does not include pallet dimensions, protective overhang, or irregular packing space.",
     reviewed: "August 14, 2026",
@@ -99,9 +102,10 @@ export const tools: ToolDefinition[] = [
     shortTitle: "Pallet Load",
     category: "Warehouse",
     tag: "layers · weight",
-    description: "Choose a familiar pallet and enter one packed carton; the calculator handles rotation, layers, height and weight limits.",
-    intro: "No pallet formula required: choose Euro, industrial, GMA or half-Euro, enter one carton’s outside size and weight, and get a complete example loading plan with editable limits.",
-    formula: "Cartons = min(cartons per layer × layers, floor(max load weight ÷ carton weight))",
+    description: "Enter a shipment quantity and one packed carton to calculate cartons per pallet, pallets required, and the final partial pallet.",
+    intro: "Choose Euro, industrial, GMA or half-Euro, enter one carton and the total shipment quantity, and get cartons per layer, full-pallet capacity, pallets required, and the last-pallet count.",
+    metaDescription: "Calculate cartons per pallet, layers, loaded height, weight, pallets required and final-pallet quantity for Euro, GMA and industrial pallets.",
+    formula: "Pallets required = ceiling(total shipment cartons ÷ safe cartons per pallet)",
     assumption: "This planning estimate assumes no overhang and identical cartons. It does not assess compression strength, stability, local rules, or safe working load.",
     reviewed: "August 11, 2026",
     sources: [
@@ -115,7 +119,7 @@ export const tools: ToolDefinition[] = [
         "A 165 cm total-height limit less a 15 cm pallet base leaves 150 cm: 6 full layers.",
         "Geometry allows 54 cartons; a 1,000 kg cargo limit at 20 kg per carton allows only 50.",
       ],
-      result: "The weight limit controls at 50 cartons, subject to pallet rating, compression and stability approval.",
+      result: "At 50 cartons per pallet, a 120-carton shipment needs 3 pallets: two full pallets and a final pallet with 20 cartons, subject to pallet rating, compression and stability approval.",
     },
     commonMistakes: [
       "Forgetting that a total-height limit includes the pallet base and load restraints.",
@@ -220,6 +224,7 @@ export const tools: ToolDefinition[] = [
     tag: "CBM · metric tonne",
     description: "Enter cargo size, quantity and packed weight; the calculator converts everything to CBM, tonnes and chargeable W/M automatically.",
     intro: "No W/M knowledge or freight quote required: enter each carton, crate or pallet line and get the chargeable CBM/tonne basis. Add ocean and local prices only when you have them.",
+    metaDescription: "Calculate LCL chargeable volume from multiple cargo lines. Compare total CBM with metric tonnes, minimum W/M units and optional quote charges.",
     formula: "W/M units = max(total CBM, gross metric tonnes); total = W/M units × rate + fixed fees",
     assumption: "Tariffs can use minimums, density rules, local charges, and currencies that differ from this simple W/M model. Follow the forwarder's quote.",
     reviewed: "August 11, 2026",
@@ -262,6 +267,7 @@ export const tools: ToolDefinition[] = [
     tag: "duty · tax · freight",
     description: "Estimate total landed cost and landed cost per unit from goods, freight, insurance, customs duty, import tax, and clearance fees.",
     intro: "Enter one purchase order and the calculator builds the customs-value basis, duty, import tax, all-in landed total, and unit cost. Every rate remains editable for the destination and product.",
+    metaDescription: "Estimate landed cost per unit from goods, freight, insurance, duty, import tax and clearance fees with editable rates and tax bases.",
     formula: "Landed total = goods + freight + insurance + duty + import tax + other fees",
     assumption: "The tax base and customs value vary by jurisdiction and product. This model uses editable percentages and is not customs or tax advice.",
     reviewed: "August 14, 2026",

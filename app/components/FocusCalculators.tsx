@@ -99,12 +99,16 @@ function ProResult({ label, primary, metrics, note, children }: { label: string;
 }
 
 const carrierRules = [
-  { key: "fedex", carrier: "FedEx", service: "Common U.S. parcel planning", imperialDivisor: 139, metricDivisor: 5000, imperialRounding: 1, metricRounding: .5 },
-  { key: "ups-daily", carrier: "UPS Daily", service: "Account / daily-rate planning", imperialDivisor: 139, metricDivisor: 5000, imperialRounding: 1, metricRounding: .5 },
-  { key: "ups-retail", carrier: "UPS Retail", service: "Retail-rate planning", imperialDivisor: 166, metricDivisor: 6000, imperialRounding: 1, metricRounding: 1 },
-  { key: "usps", carrier: "USPS", service: "2026 competitive-product DIM factor", imperialDivisor: 139, metricDivisor: 5000, imperialRounding: 1, metricRounding: 1 },
-  { key: "dhl", carrier: "DHL Express", service: "International express planning", imperialDivisor: 139, metricDivisor: 5000, imperialRounding: 1, metricRounding: .5 },
+  { key: "fedex", carrier: "FedEx", service: "U.S. parcel · nearest whole dimension", imperialDivisor: 139, metricDivisor: 5000, imperialRounding: 1, metricRounding: 1, dimensionMode: "nearest" },
+  { key: "ups-daily", carrier: "UPS Daily", service: "Account rate · round each dimension up", imperialDivisor: 139, metricDivisor: 5000, imperialRounding: 1, metricRounding: 1, dimensionMode: "up" },
+  { key: "ups-retail", carrier: "UPS Retail", service: "Retail rate · round each dimension up", imperialDivisor: 166, metricDivisor: 6000, imperialRounding: 1, metricRounding: 1, dimensionMode: "up" },
+  { key: "usps", carrier: "USPS", service: "Priority Mail / Ground Advantage · over 1 ft³", imperialDivisor: 139, metricDivisor: 5000, imperialRounding: 1, metricRounding: 1, dimensionMode: "up", minimumImperialVolume: 1728, minimumMetricVolume: 28316.846592 },
+  { key: "dhl", carrier: "DHL Express", service: "International express · conservative whole units", imperialDivisor: 139, metricDivisor: 5000, imperialRounding: 1, metricRounding: 1, dimensionMode: "up" },
 ] as const;
+
+function rateDimension(value: number, mode: "nearest" | "up") {
+  return mode === "up" ? Math.ceil(value - Number.EPSILON) : Math.round(value);
+}
 
 const packagePresets = {
   custom: { label: "Enter my own package", metric: [40, 30, 25, 8], imperial: [16, 12, 10, 18] },
@@ -125,7 +129,8 @@ export function DimensionalWeightPro() {
   const metric = system === "metric";
   const qty = Math.max(Math.floor(numberValue(quantity)), 0);
   const unit = metric ? "kg" : "lb";
-  const volume = numberValue(length) * numberValue(width) * numberValue(height);
+  const dimensions = [numberValue(length), numberValue(width), numberValue(height)] as const;
+  const volume = dimensions[0] * dimensions[1] * dimensions[2];
 
   function applyPackagePreset(key: keyof typeof packagePresets, nextSystem = system) {
     setPackagePreset(key);
@@ -153,10 +158,14 @@ export function DimensionalWeightPro() {
   const comparisons = useMemo(() => carrierRules.map((rule) => {
     const divisor = metric ? rule.metricDivisor : rule.imperialDivisor;
     const rounding = metric ? rule.metricRounding : rule.imperialRounding;
-    const dimensional = divisor ? volume / divisor : 0;
+    const ratedDimensions = dimensions.map((dimension) => rateDimension(dimension, rule.dimensionMode));
+    const ratedVolume = ratedDimensions[0] * ratedDimensions[1] * ratedDimensions[2];
+    const minimumVolume = metric ? ("minimumMetricVolume" in rule ? rule.minimumMetricVolume : 0) : ("minimumImperialVolume" in rule ? rule.minimumImperialVolume : 0);
+    const dimApplies = ratedVolume > minimumVolume;
+    const dimensional = divisor && dimApplies ? ratedVolume / divisor : 0;
     const billable = roundUp(Math.max(dimensional, numberValue(actual)), rounding);
-    return { ...rule, divisor, dimensional, billable, total: billable * qty, basis: dimensional > numberValue(actual) ? "DIM" : "Actual", penalty: Math.max(0, billable - numberValue(actual)) };
-  }), [metric, volume, actual, qty]);
+    return { ...rule, divisor, ratedDimensions, ratedVolume, dimApplies, dimensional, billable, total: billable * qty, basis: dimensional > numberValue(actual) ? "DIM" : "Actual", penalty: Math.max(0, billable - numberValue(actual)) };
+  }), [metric, dimensions, actual, qty]);
 
   const custom = numberValue(customDivisor) > 0 ? (() => {
     const dimensional = volume / numberValue(customDivisor);
@@ -180,7 +189,7 @@ export function DimensionalWeightPro() {
       <ProNumberField label="Packed parcel width" value={width} onChange={setWidth} unit={metric ? "cm" : "in"} />
       <ProNumberField label="Packed parcel height" value={height} onChange={setHeight} unit={metric ? "cm" : "in"} />
       <ProNumberField label="Scale weight for one parcel" value={actual} onChange={setActual} unit={unit} />
-      <p className="quick-assumption field-wide"><strong>What happens next:</strong> each carrier row calculates dimensional weight, compares it with the scale weight, applies its planning increment, and shows the likely billable weight.</p>
+      <p className="quick-assumption field-wide"><strong>What happens next:</strong> each carrier row first applies that carrier&apos;s dimension rule, then calculates DIM weight, checks whether DIM applies, compares it with scale weight, and rounds the likely billable weight.</p>
       <OptionalFields title="Add parcel count or a contract divisor">
         <ProNumberField label="Number of identical parcels" value={quantity} onChange={setQuantity} step="1" />
         <ProNumberField label="Negotiated DIM divisor, if known" value={customDivisor} onChange={setCustomDivisor} unit={metric ? "cm³/kg" : "in³/lb"} hint="Leave blank to compare public planning rules only." />
@@ -191,14 +200,15 @@ export function DimensionalWeightPro() {
       { label: "Packages", value: formatNumber(qty, 0) },
       { label: "Strict DIM threshold", value: shrinkPerSide > 0 ? `Shrink each side ≈ ${formatNumber(shrinkPerSide, 1)}%` : "Actual weight already competitive" },
       { label: "Compared", value: `${shownComparisons.length} billing rules` },
-    ]} note="These rows compare billable weight, not shipping price. Service eligibility, zone, negotiated terms, measurement rounding, minimums and surcharges can change the invoice.">
+    ]} note="These rows compare billable weight, not shipping price. USPS DIM is suppressed at or below one cubic foot. Service eligibility, zone, negotiated terms, package shape, minimums and surcharges can still change the invoice.">
       <div className="carrier-comparison" role="table" aria-label="Carrier dimensional weight comparison">
-        <div className="carrier-row carrier-head" role="row"><span>Carrier</span><span>DIM</span><span>Billable</span><span>Basis</span></div>
+        <div className="carrier-row carrier-head" role="row"><span>Carrier</span><span>Rated size</span><span>DIM</span><span>Billable</span><span>Basis</span></div>
         {shownComparisons.map((item) => <div className="carrier-row" role="row" key={`${item.carrier}-${item.service}`}>
           <span><strong>{item.carrier}</strong><small>{item.service} · ÷ {formatNumber(item.divisor, 0)}</small></span>
-          <span>{formatNumber(item.dimensional)} {unit}</span>
+          <span>{"ratedDimensions" in item ? item.ratedDimensions.map((dimension) => formatNumber(dimension, 0)).join(" × ") : "Entered size"}<small>{metric ? "cm" : "in"}</small></span>
+          <span>{"dimApplies" in item && !item.dimApplies ? "Not applied" : `${formatNumber(item.dimensional)} ${unit}`}</span>
           <span><strong>{formatNumber(item.total)} {unit}</strong>{qty > 1 ? <small>{formatNumber(item.billable)} each</small> : null}</span>
-          <span className={item.basis === "DIM" ? "basis-dim" : "basis-actual"}>{item.basis}{item.penalty > 0 ? <small>+{formatNumber(item.penalty)} {unit}</small> : null}</span>
+          <span className={item.basis === "DIM" ? "basis-dim" : "basis-actual"}>{"dimApplies" in item && !item.dimApplies ? "Under threshold" : item.basis}{item.penalty > 0 ? <small>+{formatNumber(item.penalty)} {unit}</small> : null}</span>
         </div>)}
       </div>
     </ProResult>
@@ -239,6 +249,7 @@ export function PalletLoadPro() {
   const [cartonWidth, setCartonWidth] = useState("30");
   const [cartonHeight, setCartonHeight] = useState("25");
   const [cartonWeight, setCartonWeight] = useState("12");
+  const [shipmentCartons, setShipmentCartons] = useState("120");
 
   function changePreset(value: string) {
     const next = value as keyof typeof palletPresets;
@@ -268,6 +279,10 @@ export function PalletLoadPro() {
   const totalCartons = Math.min(spatialCapacity, weightCapacity);
   const usedLayers = pattern.count ? Math.ceil(totalCartons / pattern.count) : 0;
   const finishedHeight = numberValue(baseHeight) + usedLayers * numberValue(cartonHeight);
+  const shipmentQuantity = Math.max(Math.floor(numberValue(shipmentCartons)), 0);
+  const palletsRequired = totalCartons > 0 ? Math.ceil(shipmentQuantity / totalCartons) : 0;
+  const fullPallets = totalCartons > 0 ? Math.floor(shipmentQuantity / totalCartons) : 0;
+  const lastPalletCartons = totalCartons > 0 ? shipmentQuantity % totalCartons : 0;
   const footprintUtilisation = numberValue(palletLength) * numberValue(palletWidth)
     ? pattern.count * numberValue(cartonLength) * numberValue(cartonWidth) / (numberValue(palletLength) * numberValue(palletWidth)) * 100
     : 0;
@@ -279,6 +294,7 @@ export function PalletLoadPro() {
       <ProNumberField label="Packed carton width" value={cartonWidth} onChange={setCartonWidth} unit="cm" />
       <ProNumberField label="Packed carton height" value={cartonHeight} onChange={setCartonHeight} unit="cm" />
       <ProNumberField label="Weight of one packed carton" value={cartonWeight} onChange={setCartonWeight} unit="kg" />
+      <ProNumberField label="Total cartons in this shipment" value={shipmentCartons} onChange={setShipmentCartons} step="1" hint="Used to calculate pallets required and the final partial pallet." />
       <p className="quick-assumption field-wide"><strong>Planning limits in use:</strong> {formatNumber(numberValue(maxTotalHeight), 1)} cm total height and {formatNumber(numberValue(maxWeight), 0)} kg cargo. Change these only if your warehouse or carrier gave you different limits.</p>
       <OptionalFields title="Change pallet size or transport limits">
         <ProNumberField label="Pallet length" value={palletLength} onChange={(value) => { setPresetKey("custom"); setPalletLength(value); }} unit="cm" />
@@ -289,14 +305,17 @@ export function PalletLoadPro() {
       </OptionalFields>
       <div className="field-wide"><PalletPattern across={pattern.across} deep={pattern.deep} orientation={pattern.orientation} /></div>
     </ProFrame>
-    <ProResult label="Estimated pallet capacity" primary={`${formatNumber(totalCartons, 0)} cartons`} metrics={[
+    <ProResult label="Estimated pallets required" primary={`${formatNumber(palletsRequired, 0)} ${palletsRequired === 1 ? "pallet" : "pallets"}`} metrics={[
+      { label: "Capacity / full pallet", value: `${formatNumber(totalCartons, 0)} cartons` },
+      { label: "Fully loaded pallets", value: formatNumber(fullPallets, 0) },
+      { label: "Partial final pallet", value: lastPalletCartons ? `${formatNumber(lastPalletCartons, 0)} cartons` : "None" },
       { label: "Cartons / layer", value: formatNumber(pattern.count, 0) },
-      { label: "Layers used", value: `${usedLayers} of ${maxLayers}` },
+      { label: "Layers / full pallet", value: `${usedLayers} of ${maxLayers}` },
       { label: "Finished height", value: `${formatNumber(finishedHeight, 1)} cm` },
-      { label: "Loaded cargo weight", value: `${formatNumber(totalCartons * numberValue(cartonWeight), 0)} kg` },
+      { label: "Total cargo weight", value: `${formatNumber(shipmentQuantity * numberValue(cartonWeight), 0)} kg` },
       { label: "Footprint use", value: `${formatNumber(footprintUtilisation, 1)}%` },
       { label: "Limiting factor", value: weightCapacity < spatialCapacity ? "Weight" : "Height / footprint" },
-    ]} note="Geometry is not a safety approval. Verify pallet rating, carton compression, stability, overhang policy, handling equipment, and transport limits." />
+    ]} note="The final pallet count assumes identical cartons and the same loading rules on every pallet. Geometry is not a safety approval; verify pallet rating, compression, stability, overhang policy and transport limits." />
   </>;
 }
 

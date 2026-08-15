@@ -5,7 +5,7 @@ const toolRoutes = [
   ["dimensional-weight-calculator", "FedEx, UPS, USPS &amp; DHL Dimensional Weight Comparison", "18 lb"],
   ["cbm-calculator", "CBM Calculator — Cubic Metres for Freight &amp; Shipping", "2.016 m³"],
   ["carton-fit-calculator", "Carton Fit Calculator", "50 items"],
-  ["pallet-load-calculator", "Pallet Loading Calculator", "54 cartons"],
+  ["pallet-load-calculator", "Pallet Loading Calculator", "3 pallets"],
   ["container-loading-calculator", "Container Loading Calculator", "270 cartons"],
   ["package-girth-calculator", "Package Length + Girth Calculator", "112 in"],
   ["shipping-unit-converter", "Shipping Unit Converter", "39.370079 in"],
@@ -81,6 +81,8 @@ test("priority calculators start from facts a non-specialist already knows", asy
   const palletHtml = await pallet.text();
   assert.match(palletHtml, /Which pallet are you using/);
   assert.match(palletHtml, /Planning limits in use/);
+  assert.match(palletHtml, /Total cartons in this shipment/);
+  assert.match(palletHtml, /Partial final pallet/);
 
   const lcl = await render("/tools/lcl-chargeable-volume-calculator");
   const lclHtml = await lcl.text();

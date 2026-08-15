@@ -6,21 +6,23 @@ import { freightQuestions } from "./lib/freight-questions";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://shipmathlab.com";
+  const contentLastModified = new Date("2026-08-14");
+  const latestLastModified = new Date("2026-08-16");
   return [
-    { url: base, changeFrequency: "weekly", priority: 1 },
-    ...tools.map((tool) => ({ url: `${base}/tools/${tool.slug}`, changeFrequency: "monthly" as const, priority: .8 })),
-    { url: `${base}/guides`, changeFrequency: "weekly", priority: .8 },
-    { url: `${base}/freight-planner`, changeFrequency: "weekly", priority: .95 },
-    { url: `${base}/questions`, changeFrequency: "weekly", priority: .9 },
-    ...guides.map((guide) => ({ url: `${base}/guides/${guide.slug}`, changeFrequency: "monthly" as const, priority: .7 })),
-    ...topics.map((topic) => ({ url: `${base}/topics/${topic.slug}`, changeFrequency: "monthly" as const, priority: .9 })),
-    ...freightQuestions.map((question) => ({ url: `${base}/questions/${question.slug}`, changeFrequency: "monthly" as const, priority: .85 })),
-    { url: `${base}/resources`, changeFrequency: "monthly", priority: .7 },
-    { url: `${base}/embed`, changeFrequency: "monthly", priority: .7 },
-    { url: `${base}/resources/for-publishers`, changeFrequency: "monthly", priority: .7 },
-    { url: `${base}/about`, changeFrequency: "yearly", priority: .3 },
-    { url: `${base}/methodology`, changeFrequency: "monthly", priority: .6 },
-    { url: `${base}/changelog`, changeFrequency: "monthly", priority: .5 },
-    { url: `${base}/privacy`, changeFrequency: "yearly", priority: .2 },
+    { url: base, lastModified: latestLastModified, changeFrequency: "weekly", priority: 1 },
+    ...tools.map((tool) => ({ url: `${base}/tools/${tool.slug}`, lastModified: tool.reviewed ? new Date(tool.reviewed) : contentLastModified, changeFrequency: "monthly" as const, priority: .8 })),
+    { url: `${base}/guides`, lastModified: contentLastModified, changeFrequency: "weekly", priority: .8 },
+    { url: `${base}/freight-planner`, lastModified: contentLastModified, changeFrequency: "weekly", priority: .95 },
+    { url: `${base}/questions`, lastModified: contentLastModified, changeFrequency: "weekly", priority: .9 },
+    ...guides.map((guide) => ({ url: `${base}/guides/${guide.slug}`, lastModified: contentLastModified, changeFrequency: "monthly" as const, priority: .7 })),
+    ...topics.map((topic) => ({ url: `${base}/topics/${topic.slug}`, lastModified: contentLastModified, changeFrequency: "monthly" as const, priority: .9 })),
+    ...freightQuestions.map((question) => ({ url: `${base}/questions/${question.slug}`, lastModified: contentLastModified, changeFrequency: "monthly" as const, priority: .85 })),
+    { url: `${base}/resources`, lastModified: contentLastModified, changeFrequency: "monthly", priority: .7 },
+    { url: `${base}/embed`, lastModified: contentLastModified, changeFrequency: "monthly", priority: .7 },
+    { url: `${base}/resources/for-publishers`, lastModified: contentLastModified, changeFrequency: "monthly", priority: .7 },
+    { url: `${base}/about`, lastModified: contentLastModified, changeFrequency: "yearly", priority: .3 },
+    { url: `${base}/methodology`, lastModified: contentLastModified, changeFrequency: "monthly", priority: .6 },
+    { url: `${base}/changelog`, lastModified: latestLastModified, changeFrequency: "monthly", priority: .5 },
+    { url: `${base}/privacy`, lastModified: contentLastModified, changeFrequency: "yearly", priority: .2 },
   ];
 }
