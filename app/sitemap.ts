@@ -3,6 +3,7 @@ import { tools } from "./lib/tools";
 import { guides } from "./lib/guides";
 import { topics } from "./lib/topics";
 import { freightQuestions } from "./lib/freight-questions";
+import { localizedFreightPaths } from "./lib/locales";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://shipmathlab.com";
@@ -24,6 +25,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/methodology`, lastModified: contentLastModified, changeFrequency: "monthly", priority: .6 },
     { url: `${base}/changelog`, lastModified: latestLastModified, changeFrequency: "monthly", priority: .5 },
     { url: `${base}/privacy`, lastModified: contentLastModified, changeFrequency: "yearly", priority: .2 },
-    { url: `${base}/nl/tools/laadmeter-calculator`, lastModified: latestLastModified, changeFrequency: "monthly", priority: .9, alternates: { languages: { en: `${base}/tools/load-meter-calculator`, nl: `${base}/nl/tools/laadmeter-calculator` } } },
+    ...(["nl", "de", "fr", "ja", "zh"] as const).map((locale) => ({
+      url: `${base}${localizedFreightPaths[locale]}`,
+      lastModified: latestLastModified,
+      changeFrequency: "monthly" as const,
+      priority: .9,
+      alternates: {
+        languages: Object.fromEntries(Object.entries(localizedFreightPaths).map(([language, path]) => [language, `${base}${path}`])),
+      },
+    })),
   ];
 }

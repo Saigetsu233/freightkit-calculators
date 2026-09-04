@@ -54,17 +54,39 @@ test("server-renders the finished ShipMathLab homepage", async () => {
   for (const [slug] of toolRoutes) assert.match(html, new RegExp(`/tools/${slug}`));
 });
 
-test("Dutch visitors get a first-party localized load-meter calculator", async () => {
-  const response = await render("/nl/tools/laadmeter-calculator");
+test("regional visitors get first-party localized freight calculators", async () => {
+  const routes = [
+    ["/nl/tools/laadmeter-calculator", "Laadmeters berekenen", "EPAL-palletmaten", "DHL Express", "4", "LDM"],
+    ["/de/tools/lademeter-rechner", "Lademeter berechnen", "EPAL-Palettenmaße", "DHL Express", "4", "LDM"],
+    ["/fr/outils/calculateur-metre-plancher", "Calculer les mètres de plancher", "Dimensions des palettes EPAL", "Colissimo", "4", "m"],
+    ["/ja/tools/truck-loading-calculator", "必要な荷台長を計算", "JPR T11型パレット", "ヤマト運輸", "5.15", "m"],
+    ["/zh/tools/truck-loading-calculator", "计算货物占用的车厢长度", "中国联运通用平托盘", "顺丰", "5", "米"],
+  ];
+
+  for (const [path, title, palletRule, carrierRule, expectedNumber, expectedUnit] of routes) {
+    const response = await render(path);
+    assert.equal(response.status, 200, path);
+    const html = await response.text();
+    assert.match(html, new RegExp(title), path);
+    assert.match(html, new RegExp(palletRule), path);
+    assert.match(html, new RegExp(carrierRule), path);
+    assert.match(html, new RegExp(`result-primary[^>]*>${escapeRegExp(expectedNumber)}[\\s\\S]{0,80}${escapeRegExp(expectedUnit)}`), path);
+    assert.match(html, /\/tools\/load-meter-calculator/, path);
+    assert.match(html, /\/de\/tools\/lademeter-rechner/, path);
+    assert.match(html, /\/ja\/tools\/truck-loading-calculator/, path);
+    assert.doesNotMatch(html, /Google Translate|browser translation/i, path);
+  }
+});
+
+test("sitemap contains all five localized regional URLs", async () => {
+  const response = await render("/sitemap.xml");
   assert.equal(response.status, 200);
-  const html = await response.text();
-  assert.match(html, /Laadmeters berekenen/);
-  assert.match(html, /Nederlandse taal en Europese maten/);
-  assert.match(html, /Europallet \(EPAL 1\)/);
-  assert.match(html, /result-primary[^>]*>4(?:<!-- -->)? LDM/);
-  assert.match(html, /hrefLang="nl-NL"/);
-  assert.match(html, /href="\/tools\/load-meter-calculator"/);
-  assert.doesNotMatch(html, /Google Translate|browser translation/i);
+  const xml = await response.text();
+  for (const path of ["/nl/tools/laadmeter-calculator", "/de/tools/lademeter-rechner", "/fr/outils/calculateur-metre-plancher", "/ja/tools/truck-loading-calculator", "/zh/tools/truck-loading-calculator"]) {
+    assert.match(xml, new RegExp(`https://shipmathlab\\.com${path}`), path);
+  }
+  assert.equal((xml.match(/<loc>/g) ?? []).length, 70);
+  assert.doesNotMatch(xml, /chatgpt\.site/);
 });
 
 test("all twenty calculator routes render their working interface", async () => {

@@ -1,41 +1,67 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect } from "react";
-import { localePathMap, type SiteLocale } from "../lib/locales";
+import { localePathMap, localePreferences, localizedFreightPaths, type SiteLocale } from "../lib/locales";
 
 const preferenceKey = "shipmathlab-locale";
+const supportedLocales = Object.keys(localePreferences) as SiteLocale[];
+
+function isLocale(value: string | null): value is SiteLocale {
+  return Boolean(value && supportedLocales.includes(value as SiteLocale));
+}
 
 function browserLocale(): SiteLocale {
   const languages = navigator.languages?.length ? navigator.languages : [navigator.language];
-  return languages.some((language) => language.toLowerCase().startsWith("nl")) ? "nl" : "en";
+  for (const language of languages) {
+    const code = language.toLowerCase().split("-")[0] as SiteLocale;
+    if (supportedLocales.includes(code)) return code;
+  }
+  return "en";
+}
+
+function localeForPath(path: string): SiteLocale | null {
+  return supportedLocales.find((locale) => localizedFreightPaths[locale] === path) ?? null;
 }
 
 export function LocaleAutoSwitch() {
   useEffect(() => {
     const path = window.location.pathname.replace(/\/$/, "") || "/";
-    document.documentElement.lang = path.startsWith("/nl/") ? "nl-NL" : "en";
+    const pathLocale = localeForPath(path);
+    if (pathLocale && pathLocale !== "en") {
+      document.documentElement.lang = localePreferences[pathLocale].languageTag;
+      window.localStorage.setItem(preferenceKey, pathLocale);
+      return;
+    }
+
+    document.documentElement.lang = "en";
     const routes = localePathMap[path];
     if (!routes) return;
-
-    const saved = window.localStorage.getItem(preferenceKey) as SiteLocale | null;
-    const locale = saved === "en" || saved === "nl" ? saved : browserLocale();
+    const saved = window.localStorage.getItem(preferenceKey);
+    const locale = isLocale(saved) ? saved : browserLocale();
     if (!saved) window.localStorage.setItem(preferenceKey, locale);
     const destination = routes[locale];
-    if (destination && destination !== path) window.location.replace(destination);
+    if (destination && destination !== path && locale !== "en") window.location.replace(destination);
   }, []);
 
   return null;
 }
 
-export function LocaleLink({ current, className = "locale-control" }: { current: SiteLocale; className?: string }) {
-  const target: SiteLocale = current === "nl" ? "en" : "nl";
-  const path = localePathMap[typeof window === "undefined" ? (current === "nl" ? "/nl/tools/laadmeter-calculator" : "/") : (window.location.pathname.replace(/\/$/, "") || "/")];
-  const href = path?.[target] ?? (target === "nl" ? "/nl/tools/laadmeter-calculator" : "/");
-
+export function LocaleMenu({ current, className = "locale-control" }: { current: SiteLocale; className?: string }) {
   return (
-    <Link href={href} hrefLang={target === "nl" ? "nl-NL" : "en"} className={className} onClick={() => window.localStorage.setItem(preferenceKey, target)}>
-      {target === "nl" ? "Nederlands" : "English"}
-    </Link>
+    <label className={`${className} locale-picker`}>
+      <span className="sr-only">Language</span>
+      <select
+        aria-label="Language"
+        value={current}
+        onChange={(event) => {
+          const target = event.target.value as SiteLocale;
+          window.localStorage.setItem(preferenceKey, target);
+          const path = window.location.pathname.replace(/\/$/, "") || "/";
+          window.location.assign(localePathMap[path]?.[target] ?? localizedFreightPaths[target]);
+        }}
+      >
+        {supportedLocales.map((locale) => <option key={locale} value={locale}>{localePreferences[locale].label}</option>)}
+      </select>
+    </label>
   );
 }
