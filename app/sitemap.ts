@@ -7,7 +7,7 @@ import { freightQuestions } from "./lib/freight-questions";
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://shipmathlab.com";
   const contentLastModified = new Date("2026-08-14");
-  const latestLastModified = new Date("2026-08-16");
+  const latestLastModified = new Date("2026-09-05");
   return [
     { url: base, lastModified: latestLastModified, changeFrequency: "weekly", priority: 1 },
     ...tools.map((tool) => ({ url: `${base}/tools/${tool.slug}`, lastModified: tool.reviewed ? new Date(tool.reviewed) : contentLastModified, changeFrequency: "monthly" as const, priority: .8 })),
@@ -24,5 +24,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/methodology`, lastModified: contentLastModified, changeFrequency: "monthly", priority: .6 },
     { url: `${base}/changelog`, lastModified: latestLastModified, changeFrequency: "monthly", priority: .5 },
     { url: `${base}/privacy`, lastModified: contentLastModified, changeFrequency: "yearly", priority: .2 },
+    { url: `${base}/nl/tools/laadmeter-calculator`, lastModified: latestLastModified, changeFrequency: "monthly", priority: .9, alternates: { languages: { en: `${base}/tools/load-meter-calculator`, nl: `${base}/nl/tools/laadmeter-calculator` } } },
   ];
 }

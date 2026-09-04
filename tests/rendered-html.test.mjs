@@ -54,6 +54,19 @@ test("server-renders the finished ShipMathLab homepage", async () => {
   for (const [slug] of toolRoutes) assert.match(html, new RegExp(`/tools/${slug}`));
 });
 
+test("Dutch visitors get a first-party localized load-meter calculator", async () => {
+  const response = await render("/nl/tools/laadmeter-calculator");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Laadmeters berekenen/);
+  assert.match(html, /Nederlandse taal en Europese maten/);
+  assert.match(html, /Europallet \(EPAL 1\)/);
+  assert.match(html, /result-primary[^>]*>4(?:<!-- -->)? LDM/);
+  assert.match(html, /hrefLang="nl-NL"/);
+  assert.match(html, /href="\/tools\/load-meter-calculator"/);
+  assert.doesNotMatch(html, /Google Translate|browser translation/i);
+});
+
 test("all twenty calculator routes render their working interface", async () => {
   for (const [slug, title, expectedResult] of toolRoutes) {
     const response = await render(`/tools/${slug}`);

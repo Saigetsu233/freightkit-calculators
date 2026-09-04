@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { Analytics } from "./components/Analytics";
+import { LocaleAutoSwitch } from "./components/LocaleRouting";
 import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -72,7 +73,7 @@ const structuredData = [
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}<Analytics /><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} /></body>
+      <body>{children}<LocaleAutoSwitch /><Analytics /><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} /></body>
     </html>
   );
 }

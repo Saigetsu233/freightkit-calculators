@@ -36,6 +36,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .site-nav { display: flex; align-items: center; gap: 28px; font-size: .88rem; font-weight: 750; }
 .site-nav a { border-bottom: 2px solid transparent; padding: 7px 0; }
 .site-nav a:hover, .site-nav a:focus-visible { border-color: var(--orange); }
+.locale-control { color: var(--blue); }
 .nav-pill { border: 1px solid var(--ink) !important; border-radius: 999px; padding: 9px 15px !important; }
 .nav-pill:hover { background: var(--ink); color: white; }
 
@@ -142,6 +143,16 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .tool-meta div { display: flex; justify-content: space-between; gap: 20px; padding-bottom: 13px; border-bottom: 1px solid var(--line); font-size: .76rem; }
 .tool-meta span { color: var(--muted); }
 .tool-meta strong { text-align: right; }
+.regional-context { border-block: 1px solid var(--ink); background: var(--acid); }
+.regional-context-grid { min-height: 92px; display: grid; grid-template-columns: .8fr 1.2fr; gap: 50px; align-items: center; padding-block: 18px; }
+.regional-context-grid span { display: block; font-size: .65rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+.regional-context-grid strong { display: block; margin-top: 6px; font: 500 1.35rem/1.1 Georgia, serif; }
+.regional-context-grid p { margin: 0; color: #3f443c; font-size: .82rem; line-height: 1.55; }
+.regional-standard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 25px 0; }
+.regional-standard-grid article { border: 1px solid var(--ink); background: var(--white); padding: 18px; }
+.regional-standard-grid span { display: block; color: var(--orange-dark); font-size: .67rem; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
+.regional-standard-grid strong { display: block; margin-top: 9px; font: 500 1.5rem/1 Georgia, serif; }
+.regional-standard-grid p { margin-bottom: 0; font-size: .77rem; line-height: 1.55; }
 .calculator-band { background: var(--white); border-block: 1px solid var(--ink); padding-block: 54px 70px; }
 .calculator-shell > [data-calculator-root] { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(330px, .88fr); gap: 42px; align-items: start; }
 .calculator-shell .calculator-next-steps { grid-column: 1 / -1; }
@@ -403,7 +414,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .affiliate-note { max-width: 760px; margin-top: 28px; color: var(--muted); font-size: .75rem; line-height: 1.6; }
 
 @media (max-width: 900px) {
-  .hero, .tool-hero, .workflow-grid, .method-section, .evidence-grid, .home-product-grid, .product-grid, .embed-panel, .embed-calculator, .topic-hero, .topic-method { grid-template-columns: 1fr; }
+  .hero, .tool-hero, .workflow-grid, .method-section, .evidence-grid, .home-product-grid, .product-grid, .embed-panel, .embed-calculator, .topic-hero, .topic-method, .regional-context-grid { grid-template-columns: 1fr; }
   .formula-flow ol { grid-template-columns: repeat(3,1fr); }.formula-flow li { border-bottom: 1px solid var(--ink); }.formula-flow li:nth-child(3) { border-right: 0; }
   .hero { gap: 48px; padding-top: 58px; }
   .tool-hero { gap: 32px; }
@@ -426,7 +437,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 @media (max-width: 640px) {
   .shell { width: min(100% - 24px, 1180px); }
-  .site-nav a:not(.nav-pill) { display: none; }
+  .site-nav a:not(.nav-pill):not(.locale-control) { display: none; }
   .header-inner { height: 64px; }
   .hero { min-height: auto; padding-block: 48px 65px; }
   .hero h1 { font-size: clamp(3.25rem, 16vw, 4.7rem); }
@@ -446,6 +457,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .tool-grid { grid-template-columns: 1fr; }
   .home-guide-grid, .guide-grid, .partner-grid, .tool-guide-grid, .topic-question-grid, .free-resource-grid { grid-template-columns: 1fr; }
   .tool-card { min-height: 285px; padding: 23px; }
+  .regional-standard-grid { grid-template-columns: 1fr; }
   .workflow-section { padding-block: 75px; }
   .workflow-grid { gap: 45px; }
   .footer-links { grid-template-columns: 1fr; }

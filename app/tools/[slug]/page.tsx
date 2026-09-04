@@ -43,7 +43,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: tool.title,
     description: tool.metaDescription ?? tool.intro,
-    alternates: { canonical: `/tools/${tool.slug}` },
+    alternates: tool.slug === "load-meter-calculator" ? {
+      canonical: `/tools/${tool.slug}`,
+      languages: { en: `/tools/${tool.slug}`, "nl-NL": "/nl/tools/laadmeter-calculator", "x-default": `/tools/${tool.slug}` },
+    } : { canonical: `/tools/${tool.slug}` },
     openGraph: { title: `${tool.title} | ShipMathLab`, description: tool.metaDescription ?? tool.intro, url: `/tools/${tool.slug}`, images: socialImages[tool.slug] ? [socialImages[tool.slug]] : undefined },
     twitter: socialImages[tool.slug] ? { card: "summary_large_image", images: [socialImages[tool.slug]] } : undefined,
   };
