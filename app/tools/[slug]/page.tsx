@@ -11,6 +11,8 @@ import { getTool, tools } from "../../lib/tools";
 import { getTopicForTool } from "../../lib/topics";
 import { priorityToolContent } from "../../lib/priority-content";
 import { freightQuestions } from "../../lib/freight-questions";
+import { localizedCoreToolPaths, type RegionalCoreTool } from "../../lib/regional-core-tools";
+import { localePreferences, type SiteLocale } from "../../lib/locales";
 
 const taxRecommendations: Record<string, { title: string; description: string; href: string; label: string }> = {
   "ecommerce-margin-calculator": {
@@ -40,10 +42,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     "pallet-load-calculator": "/og-pallet-load.png",
     "lcl-chargeable-volume-calculator": "/og-lcl-wm.png",
   };
+  const regionalToolMap: Record<string, RegionalCoreTool> = {
+    "dimensional-weight-calculator": "dimensional-weight",
+    "pallet-load-calculator": "pallet-loading",
+    "lcl-chargeable-volume-calculator": "lcl-chargeable-volume",
+  };
+  const localizedKey = regionalToolMap[tool.slug];
+  const localizedLanguages = localizedKey ? Object.fromEntries(
+    (Object.keys(localizedCoreToolPaths) as SiteLocale[]).map((locale) => [localePreferences[locale].languageTag, localizedCoreToolPaths[locale][localizedKey]]),
+  ) : null;
   return {
     title: tool.title,
     description: tool.metaDescription ?? tool.intro,
-    alternates: tool.slug === "load-meter-calculator" ? {
+    alternates: localizedLanguages ? { canonical: `/tools/${tool.slug}`, languages: { ...localizedLanguages, "x-default": `/tools/${tool.slug}` } } : tool.slug === "load-meter-calculator" ? {
       canonical: `/tools/${tool.slug}`,
       languages: {
         en: `/tools/${tool.slug}`,

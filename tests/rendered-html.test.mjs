@@ -109,8 +109,26 @@ test("sitemap contains the regional calculator and localized navigation URLs", a
   for (const path of ["/nl/vrachtplanner", "/de/frachtplaner", "/fr/planificateur-fret", "/ja/guides", "/zh/methodology"]) {
     assert.match(xml, new RegExp(`https://shipmathlab\\.com${path}`), path);
   }
-  assert.equal((xml.match(/<loc>/g) ?? []).length, 100);
+  assert.equal((xml.match(/<loc>/g) ?? []).length, 115);
   assert.doesNotMatch(xml, /chatgpt\.site/);
+});
+
+test("priority freight calculators have first-party localized working pages", async () => {
+  const routes = [
+    ["/ja/tools/dimensional-weight-calculator", "容積重量を計算", "課金重量"],
+    ["/zh/tools/pallet-loading-calculator", "计算托盘装载", "所需托盘数"],
+    ["/de/tools/lcl-abrechnungsvolumen-rechner", "LCL-Abrechnungsvolumen berechnen", "Abrechenbare W/M"],
+    ["/fr/outils/calculateur-poids-volumetrique", "Calculer le poids volumétrique", "Poids facturable"],
+    ["/nl/tools/pallet-belading-calculator", "Palletbelading berekenen", "Benodigde pallets"],
+  ];
+  for (const [path, title, result] of routes) {
+    const response = await render(path);
+    assert.equal(response.status, 200, path);
+    const html = await response.text();
+    assert.match(html, new RegExp(escapeRegExp(title)), path);
+    assert.match(html, new RegExp(escapeRegExp(result)), path);
+    assert.match(html, /type="number"/, path);
+  }
 });
 
 test("all twenty calculator routes render their working interface", async () => {

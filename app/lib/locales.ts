@@ -23,6 +23,7 @@ export const localizedFreightPaths: Record<SiteLocale, string> = {
 };
 
 import { localizedHubPaths, type RegionalHubKey } from "./regional-hubs";
+import { localizedCoreToolPaths, type RegionalCoreTool } from "./regional-core-tools";
 
 const equivalents: Partial<Record<SiteLocale, string>> = { ...localizedFreightPaths };
 
@@ -32,12 +33,24 @@ function equivalentsForHub(key: RegionalHubKey): Partial<Record<SiteLocale, stri
   ) as Partial<Record<SiteLocale, string>>;
 }
 
+function equivalentsForCoreTool(key: RegionalCoreTool): Partial<Record<SiteLocale, string>> {
+  return Object.fromEntries(
+    (Object.keys(localizedCoreToolPaths) as SiteLocale[]).map((locale) => [locale, localizedCoreToolPaths[locale][key]]),
+  ) as Partial<Record<SiteLocale, string>>;
+}
+
 export const localePathMap: Record<string, Partial<Record<SiteLocale, string>>> = {
   "/": equivalents,
   ...Object.fromEntries(Object.values(localizedFreightPaths).map((path) => [path, equivalents])),
   ...Object.fromEntries(
     (["planner", "questions", "guides", "resources", "embed", "methodology"] as RegionalHubKey[]).flatMap((key) => {
       const paths = equivalentsForHub(key);
+      return Object.values(paths).map((path) => [path, paths]);
+    }),
+  ),
+  ...Object.fromEntries(
+    (["dimensional-weight", "pallet-loading", "lcl-chargeable-volume"] as RegionalCoreTool[]).flatMap((key) => {
+      const paths = equivalentsForCoreTool(key);
       return Object.values(paths).map((path) => [path, paths]);
     }),
   ),

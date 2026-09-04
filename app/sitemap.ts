@@ -5,6 +5,7 @@ import { topics } from "./lib/topics";
 import { freightQuestions } from "./lib/freight-questions";
 import { localizedFreightPaths } from "./lib/locales";
 import { allLocalizedHubPaths } from "./lib/regional-hubs";
+import { allLocalizedCoreToolPaths } from "./lib/regional-core-tools";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://shipmathlab.com";
@@ -40,6 +41,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: latestLastModified,
       changeFrequency: "monthly" as const,
       priority: .65,
+    })),
+    ...allLocalizedCoreToolPaths.map((path) => ({
+      url: `${base}${path}`,
+      lastModified: latestLastModified,
+      changeFrequency: "monthly" as const,
+      priority: .9,
     })),
   ];
 }

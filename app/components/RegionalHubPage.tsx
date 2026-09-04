@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { localizedFreightPaths, localePreferences, type SiteLocale } from "../lib/locales";
 import { getRegionalHub, localizedHubPaths, type RegionalHubKey } from "../lib/regional-hubs";
+import { coreToolCopy, localizedCoreToolPaths, type RegionalCoreTool } from "../lib/regional-core-tools";
 import { SiteFooter, SiteHeader } from "./SiteChrome";
 
 function isLocale(value: string): value is SiteLocale {
@@ -32,6 +33,8 @@ export function RegionalHubPage({ locale: localeValue, section }: { locale: stri
   const locale = localeValue as Exclude<SiteLocale, "en">;
   const { content } = entry;
   const calculatorHref = `${localizedFreightPaths[locale]}#calculator`;
+  const corePaths = localizedCoreToolPaths[locale];
+  const coreCopy = coreToolCopy(locale);
   const languageLinks = Object.entries(localizedHubPaths).map(([key, paths]) => ({
     locale: key as SiteLocale,
     href: paths[entry.key as RegionalHubKey],
@@ -57,6 +60,11 @@ export function RegionalHubPage({ locale: localeValue, section }: { locale: stri
         </section>
         <section className="regional-hub-grid" aria-label={content.section}>
           {content.cards.map((card) => <article key={card.title}><h2>{card.title}</h2><p>{card.description}</p></article>)}
+        </section>
+        <section className="regional-core-links" aria-label={content.section}>
+          {(Object.keys(corePaths) as RegionalCoreTool[]).map((tool) => <Link key={tool} href={corePaths[tool]}>
+            {tool === "dimensional-weight" ? coreCopy.dim : tool === "pallet-loading" ? coreCopy.pallet : coreCopy.lcl} →
+          </Link>)}
         </section>
         <aside className="regional-hub-note"><strong>{content.noteTitle}</strong><p>{content.note}</p></aside>
         <nav className="regional-hub-language-links" aria-label="Languages">
