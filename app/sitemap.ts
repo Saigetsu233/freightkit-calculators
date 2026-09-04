@@ -4,6 +4,7 @@ import { guides } from "./lib/guides";
 import { topics } from "./lib/topics";
 import { freightQuestions } from "./lib/freight-questions";
 import { localizedFreightPaths } from "./lib/locales";
+import { allLocalizedHubPaths } from "./lib/regional-hubs";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://shipmathlab.com";
@@ -33,6 +34,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       alternates: {
         languages: Object.fromEntries(Object.entries(localizedFreightPaths).map(([language, path]) => [language, `${base}${path}`])),
       },
+    })),
+    ...allLocalizedHubPaths.map((path) => ({
+      url: `${base}${path}`,
+      lastModified: latestLastModified,
+      changeFrequency: "monthly" as const,
+      priority: .65,
     })),
   ];
 }

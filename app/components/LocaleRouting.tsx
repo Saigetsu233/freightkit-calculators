@@ -20,7 +20,9 @@ function browserLocale(): SiteLocale {
 }
 
 function localeForPath(path: string): SiteLocale | null {
-  return supportedLocales.find((locale) => localizedFreightPaths[locale] === path) ?? null;
+  return supportedLocales.find((locale) => localizedFreightPaths[locale] === path)
+    ?? supportedLocales.find((locale) => locale !== "en" && path.startsWith(`/${locale}/`))
+    ?? null;
 }
 
 export function LocaleAutoSwitch() {

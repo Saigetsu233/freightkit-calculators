@@ -78,14 +78,38 @@ test("regional visitors get first-party localized freight calculators", async ()
   }
 });
 
-test("sitemap contains all five localized regional URLs", async () => {
+test("localized navigation hubs are real pages instead of English-only links", async () => {
+  const routes = [
+    ["/nl/vrachtplanner", "Controleer ruimte, gewicht", "/nl/gidsen"],
+    ["/de/frachtplaner", "Prüfen Sie Platz, Gewicht", "/de/ratgeber"],
+    ["/fr/planificateur-fret", "Vérifiez l'espace, le poids", "/fr/guides"],
+    ["/ja/freight-planner", "予約前に、スペース・重量・見積条件を確認します", "/ja/guides"],
+    ["/zh/freight-planner", "订舱前先核对空间、重量和报价依据", "/zh/guides"],
+    ["/ja/questions", "計算の前に、確認したいことを整理します", "/ja/freight-planner"],
+    ["/zh/embed", "把实用的货运检查放进你自己的页面", "/zh/methodology"],
+  ];
+
+  for (const [path, heading, localLink] of routes) {
+    const response = await render(path);
+    assert.equal(response.status, 200, path);
+    const html = await response.text();
+    assert.match(html, new RegExp(escapeRegExp(heading)), path);
+    assert.match(html, new RegExp(escapeRegExp(localLink)), path);
+    assert.doesNotMatch(html, /（英語）|\(EN\)|\(English\)/, path);
+  }
+});
+
+test("sitemap contains the regional calculator and localized navigation URLs", async () => {
   const response = await render("/sitemap.xml");
   assert.equal(response.status, 200);
   const xml = await response.text();
   for (const path of ["/nl/tools/laadmeter-calculator", "/de/tools/lademeter-rechner", "/fr/outils/calculateur-metre-plancher", "/ja/tools/truck-loading-calculator", "/zh/tools/truck-loading-calculator"]) {
     assert.match(xml, new RegExp(`https://shipmathlab\\.com${path}`), path);
   }
-  assert.equal((xml.match(/<loc>/g) ?? []).length, 70);
+  for (const path of ["/nl/vrachtplanner", "/de/frachtplaner", "/fr/planificateur-fret", "/ja/guides", "/zh/methodology"]) {
+    assert.match(xml, new RegExp(`https://shipmathlab\\.com${path}`), path);
+  }
+  assert.equal((xml.match(/<loc>/g) ?? []).length, 100);
   assert.doesNotMatch(xml, /chatgpt\.site/);
 });
 
