@@ -198,6 +198,10 @@ async function analyticsReport(request: Request, env: Env) {
     eventTotals,
     eventTopPages,
     embedSources,
+    eventDaily,
+    eventPageDaily,
+    pageDaily,
+    sourceDaily,
   ] = await env.DB.batch([
     env.DB.prepare(
       "SELECT COUNT(*) AS views, COUNT(DISTINCT visitor_hash) AS daily_unique_visitors FROM page_views WHERE event_date >= ? AND is_internal = 0",
@@ -247,11 +251,24 @@ async function analyticsReport(request: Request, env: Env) {
     env.DB.prepare(
       "SELECT source_host AS host, COUNT(*) AS embeds FROM interaction_events WHERE event_date >= ? AND is_internal = 0 AND event_type = 'embed_view' AND source_host <> '' GROUP BY source_host ORDER BY embeds DESC LIMIT 20",
     ).bind(startDate),
+    env.DB.prepare(
+      "SELECT event_date AS date, event_type AS event, COUNT(*) AS events, COUNT(DISTINCT visitor_hash) AS daily_unique_users FROM interaction_events WHERE event_date >= ? AND is_internal = 0 GROUP BY event_date, event_type ORDER BY event_date, event_type",
+    ).bind(startDate),
+    env.DB.prepare(
+      "SELECT event_date AS date, event_type AS event, path, event_label AS label, COUNT(*) AS events, COUNT(DISTINCT visitor_hash) AS daily_unique_users FROM interaction_events WHERE event_date >= ? AND is_internal = 0 GROUP BY event_date, event_type, path, event_label ORDER BY event_date, path, event_type, event_label",
+    ).bind(startDate),
+    env.DB.prepare(
+      "SELECT event_date AS date, path, COUNT(*) AS views, COUNT(DISTINCT visitor_hash) AS visitors FROM page_views WHERE event_date >= ? AND is_internal = 0 GROUP BY event_date, path ORDER BY event_date, path",
+    ).bind(startDate),
+    env.DB.prepare(
+      "SELECT event_date AS date, path, source_channel AS source, referrer_host AS host, COUNT(*) AS views FROM page_views WHERE event_date >= ? AND is_internal = 0 GROUP BY event_date, path, source_channel, referrer_host ORDER BY event_date, path, source_channel, referrer_host",
+    ).bind(startDate),
   ]);
 
   return Response.json(
     {
       period: { days: 30, startDate, endDate: new Date().toISOString().slice(0, 10) },
+      reporting: { version: 2, timezone: "UTC", visitorScope: "anonymous-daily" },
       totals: totals.results[0] ?? { views: 0, daily_unique_visitors: 0 },
       internalTotals: internalTotals.results[0] ?? { views: 0, daily_unique_visitors: 0 },
       historicalUnclassifiedTotals: historicalTotals.results[0] ?? { views: 0, daily_unique_visitors: 0 },
@@ -268,6 +285,10 @@ async function analyticsReport(request: Request, env: Env) {
       eventTotals: eventTotals.results,
       eventTopPages: eventTopPages.results,
       embedSources: embedSources.results,
+      eventDaily: eventDaily.results,
+      eventPageDaily: eventPageDaily.results,
+      pageDaily: pageDaily.results,
+      sourceDaily: sourceDaily.results,
     },
     { headers: { "cache-control": "no-store" } },
   );
