@@ -109,7 +109,7 @@ test("sitemap contains the regional calculator and localized navigation URLs", a
   for (const path of ["/nl/vrachtplanner", "/de/frachtplaner", "/fr/planificateur-fret", "/ja/guides", "/zh/methodology"]) {
     assert.match(xml, new RegExp(`https://shipmathlab\\.com${path}`), path);
   }
-  assert.equal((xml.match(/<loc>/g) ?? []).length, 115);
+  assert.equal((xml.match(/<loc>/g) ?? []).length, 116);
   assert.doesNotMatch(xml, /chatgpt\.site/);
 });
 
