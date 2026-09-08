@@ -49,6 +49,7 @@ test("server-renders the finished ShipMathLab homepage", async () => {
   assert.match(html, /ShipMathLab/);
   assert.match(html, /20 packaging &amp; freight calculators/);
   assert.match(html, /All 20 calculators/);
+  assert.match(html, /class="mobile-nav"/);
   assert.match(html, /Browse all [\s\S]{0,30}25[\s\S]{0,30} guides/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/);
   for (const [slug] of toolRoutes) assert.match(html, new RegExp(`/tools/${slug}`));
